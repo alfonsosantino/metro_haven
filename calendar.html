@@ -137,6 +137,29 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
   td .tag{font-size:8px;letter-spacing:.3px}
   .cardfoot img{height:48px}
 }
+
+.btn-gold{background:var(--gold);border-color:var(--gold);color:var(--green);margin-bottom:10px}
+.btn-gold:disabled{opacity:.45;cursor:not-allowed}
+.btn{font-family:inherit}
+.live{font-size:12.5px;color:var(--muted);margin-top:12px;display:flex;align-items:center;gap:7px}
+.live i{width:8px;height:8px;border-radius:50%;background:#9aa49f;display:inline-block}
+.live.on i{background:#2f9e6b;box-shadow:0 0 0 3px rgba(47,158,107,.18)}
+.modal{position:fixed;inset:0;background:rgba(6,20,17,.6);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal[hidden]{display:none}
+.mcard{background:#fff;border-radius:24px;max-width:460px;width:100%;max-height:92vh;overflow:auto;padding:30px;position:relative}
+.mx{position:absolute;top:14px;right:16px;border:0;background:none;font-size:28px;line-height:1;color:var(--green);cursor:pointer}
+.mcard h3{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:28px;margin:4px 0 12px}
+.msum{background:var(--cream);border:1px solid var(--sand);border-radius:14px;padding:12px 16px;font-size:14.5px;color:var(--ink);margin-bottom:16px;line-height:1.6}
+.msum b{color:var(--green)}
+#bform label{display:block;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:12px}
+#bform input,#bform textarea{display:block;width:100%;margin-top:6px;border:1px solid var(--sand);background:var(--cream);border-radius:12px;padding:12px 14px;font:inherit;font-size:15.5px;color:var(--ink);text-transform:none;letter-spacing:0}
+#bform input:focus,#bform textarea:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important}
+.fineprint{font-size:13px;color:var(--muted);margin:4px 0 12px}
+.ferr{color:#9a3b2b;font-size:14px;min-height:1em;margin-bottom:8px}
+#bmDone{text-align:center}
+.okic{width:56px;height:56px;border-radius:50%;background:var(--green);color:var(--gold);display:grid;place-items:center;font-size:28px;margin:6px auto 8px}
+.ref{font-family:'Lilita One';font-size:34px;color:var(--green);letter-spacing:2px;margin:4px 0 10px}
 </style>
 </head>
 <body>
@@ -196,9 +219,11 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
           </div>
         </div>
         <div class="nights" id="nights"></div>
+        <button class="btn btn-gold" id="booknow" type="button" disabled>Book Now →</button>
         <a class="btn btn-dark" id="request" aria-disabled="true" target="_blank" rel="noopener" href="#">Request on Messenger →</a>
         <button class="btn btn-ghost" id="clear" type="button">Clear dates</button>
         <p class="msg" id="msg" role="status"></p>
+        <p class="live" id="live"><i></i><span>Availability from calendar file</span></p>
         <p class="note">Your booking is confirmed once we reply and payment is received. Check-in 3:00 PM · Check-out 12:00 NN · Extra guests ₱250 per guest, per night.</p>
       </div>
       <div class="box">
@@ -215,9 +240,40 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
   </div>
 </main>
 
+
+<div class="modal" id="bmodal" hidden role="dialog" aria-modal="true" aria-labelledby="bmTitle">
+  <div class="mcard">
+    <button class="mx" id="bmClose" type="button" aria-label="Close">×</button>
+    <div id="bmForm">
+      <div class="eyebrow">Book Now</div>
+      <h3 id="bmTitle">Request to book</h3>
+      <div class="msum" id="bmSum"></div>
+      <form id="bform" novalidate>
+        <label>Full name<input name="name" required autocomplete="name" maxlength="80"></label>
+        <label>Mobile number<input name="phone" type="tel" autocomplete="tel" maxlength="30" placeholder="09XX XXX XXXX"></label>
+        <label>Email<input name="email" type="email" autocomplete="email" maxlength="120" placeholder="you@email.com"></label>
+        <label>Message (optional)<textarea name="message" rows="3" maxlength="1000" placeholder="Arrival time, special requests…"></textarea></label>
+        <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="fineprint">Enter a mobile number or email so we can confirm. This is a request — your booking is confirmed once we accept it and payment is received.</p>
+        <p class="ferr" id="bmErr" role="alert"></p>
+        <button class="btn btn-dark" id="bmSubmit" type="submit">Send booking request</button>
+      </form>
+    </div>
+    <div id="bmDone" hidden>
+      <div class="okic">✓</div>
+      <h3>Request sent!</h3>
+      <p>Your reference number is</p>
+      <div class="ref" id="bmRef"></div>
+      <p class="fineprint">Save this number. We'll contact you shortly to confirm your booking and payment details. You can check your status anytime on our homepage under "Check your booking".</p>
+      <button class="btn btn-ghost" id="bmOk" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
 <footer>© 2026 Metro Haven · The Grass Residences, Quezon City</footer>
 
 <script src="bookings.js"></script>
+<script src="js/config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const SUITES = {
@@ -229,7 +285,7 @@ const MAX_INFANTS = 2;
 const guests = { adults: 1, children: 0, infants: 0 };
 const MESSENGER = "https://m.me/61566400330651";
 const MONTHS = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
-const BOOKINGS = window.METRO_HAVEN_BOOKINGS || {};
+let BOOKINGS = window.METRO_HAVEN_BOOKINGS || {};
 
 const pad = n => String(n).padStart(2,"0");
 const key = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -320,7 +376,9 @@ function updatePanel(){
     const text = `Hi Metro Haven! I'd like to book the ${SUITES[suite].name} — check-in ${nice(checkIn)}, check-out ${nice(checkOut)} (${nights} night${nights>1?"s":""}), for ${guestText(true)}. Is it available?`;
     req.href = `${MESSENGER}?text=${encodeURIComponent(text)}`;
     req.setAttribute("aria-disabled","false");
+    document.getElementById("booknow").disabled = false;
   } else {
+    document.getElementById("booknow").disabled = true;
     n.textContent = "";
     hint.textContent = checkIn ? "Now tap your check-out date." : "Tap a date on the calendar to set your check-in.";
     req.href = "#"; req.setAttribute("aria-disabled","true");
@@ -377,6 +435,55 @@ document.addEventListener("click", e => { if(!gpanel.hidden && !e.target.closest
 document.addEventListener("keydown", e => { if(e.key === "Escape") toggleG(false); });
 
 renderTabs(); render(); renderGuests();
+/* ---------- Live availability + Book Now ---------- */
+const API_ON = window.mhApi && mhApi.ready();
+async function loadLive(){
+  if(!API_ON) return;
+  try{
+    const j = await mhApi.get({ action: "dates" });
+    const merged = {};
+    Object.keys(SUITES).forEach(k => merged[k] = [].concat(BOOKINGS[k] || [], (j.dates && j.dates[k]) || []));
+    BOOKINGS = merged;
+    const live = document.getElementById("live"); live.classList.add("on"); live.querySelector("span").textContent = "Live availability";
+    render();
+  }catch(e){ /* keep calendar file data */ }
+}
+const bm = document.getElementById("bmodal");
+function openBook(){
+  if(!checkIn || !checkOut) return;
+  if(!API_ON){ window.open(document.getElementById("request").href, "_blank", "noopener"); return; }
+  const nights = Math.round((checkOut - checkIn)/864e5);
+  document.getElementById("bmSum").innerHTML = `<b>${SUITES[suite].name}</b> · ${SUITES[suite].where}<br>${nice(checkIn)} → ${nice(checkOut)} · ${nights} night${nights>1?"s":""}<br>${guestText(true)}`;
+  document.getElementById("bmErr").textContent = "";
+  document.getElementById("bmForm").hidden = false; document.getElementById("bmDone").hidden = true;
+  bm.hidden = false; document.body.style.overflow = "hidden";
+  setTimeout(() => document.querySelector("#bform [name=name]").focus(), 50);
+}
+function closeBook(){ bm.hidden = true; document.body.style.overflow = ""; }
+document.getElementById("booknow").onclick = openBook;
+document.getElementById("bmClose").onclick = closeBook;
+document.getElementById("bmOk").onclick = () => { closeBook(); checkIn = checkOut = null; render(); };
+bm.addEventListener("click", e => { if(e.target === bm) closeBook(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape" && !bm.hidden) closeBook(); });
+document.getElementById("bform").onsubmit = async e => {
+  e.preventDefault();
+  const f = e.target, err = document.getElementById("bmErr"), btn = document.getElementById("bmSubmit");
+  const name = f.name.value.trim(), phone = f.phone.value.trim(), email = f.email.value.trim();
+  if(!name){ err.textContent = "Please enter your name."; return; }
+  if(!phone && !email){ err.textContent = "Please enter a mobile number or email."; return; }
+  if(email && !/^\S+@\S+\.\S+$/.test(email)){ err.textContent = "Please check your email address."; return; }
+  err.textContent = ""; btn.disabled = true; btn.textContent = "Sending…";
+  try{
+    const j = await mhApi.post({ action: "inquire", suite, checkin: key(checkIn), checkout: key(checkOut),
+      adults: guests.adults, children: guests.children, infants: guests.infants,
+      name, phone, email, message: f.message.value.trim(), website: f.website.value });
+    document.getElementById("bmRef").textContent = j.id;
+    document.getElementById("bmForm").hidden = true; document.getElementById("bmDone").hidden = false;
+    f.reset();
+  }catch(ex){ err.textContent = ex.message || "Something went wrong. Please try again or message us on Messenger."; loadLive(); }
+  finally{ btn.disabled = false; btn.textContent = "Send booking request"; }
+};
+loadLive();
 </script>
 </body>
 </html>

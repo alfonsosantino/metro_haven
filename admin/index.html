@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Metro Haven</title>
+<link rel="icon" href="../img/logo_dark.png">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#06302a;--green2:#0d4238;--cream:#fbf7f2;--beige:#efe6da;--sand:#e4d6c3;--gold:#c9a675;--gold-dk:#a8834f;--ink:#1d2b27;--muted:#5f6d68;
+  --ok:#1f7a50;--okbg:#dcefe5;--warn:#a8834f;--warnbg:#f6ead6;--bad:#9a3b2b;--badbg:#f6e1dc;--grey:#6b7772;--greybg:#ebe7e0}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{font-family:'Jost',sans-serif;background:var(--cream);color:var(--ink);font-size:15.5px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14.5px;border:2px solid var(--green);cursor:pointer;text-decoration:none;background:transparent;color:var(--green);white-space:nowrap}
+.btn-dark{background:var(--green);color:var(--cream)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:var(--green)}
+.btn-ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn-bad{border-color:var(--bad);color:var(--bad)}
+.btn-sm{padding:7px 14px;font-size:13.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.lcard{background:#fff;border:1px solid var(--sand);border-radius:26px;padding:40px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(6,48,42,.08)}
+.lcard img{height:90px;margin:0 auto 10px;display:block}
+.lcard h1{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:30px}
+.lcard p{color:var(--muted);font-size:14.5px;margin:4px 0 22px}
+.lcard input{width:100%;padding:13px 16px;border:1px solid var(--sand);background:var(--cream);border-radius:14px;margin-bottom:12px}
+.lcard .btn{width:100%}
+.err{color:var(--bad);font-size:14px;min-height:1.2em;margin-top:10px}
+.setup{background:var(--warnbg);border-radius:14px;padding:14px;font-size:14px;color:var(--ink);text-align:left;margin-bottom:16px}
+
+/* top bar */
+header{background:var(--green);color:var(--cream)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:70px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand img{height:44px}
+.brand b{font-family:'Lilita One';font-weight:400;font-size:21px;letter-spacing:.5px}
+.brand span{background:var(--gold);color:var(--green);font-size:11px;font-weight:700;letter-spacing:2px;padding:3px 8px;border-radius:6px;margin-left:4px}
+.hact{display:flex;gap:8px}
+header .btn{border-color:rgba(255,255,255,.35);color:var(--cream)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0 18px}
+.st{background:#fff;border:1px solid var(--sand);border-radius:18px;padding:18px 20px}
+.st small{display:block;font-size:12px;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.st b{font-family:'Lilita One';font-weight:400;font-size:34px;color:var(--green);line-height:1.2}
+.st.hl{background:var(--green);border-color:var(--green)}.st.hl small{color:#b9c8c1}.st.hl b{color:var(--gold)}
+
+/* tabs */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--sand);margin-bottom:22px;overflow-x:auto}
+.tab{border:0;background:none;padding:12px 16px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--green);border-color:var(--gold)}
+.tab .n{background:var(--gold);color:var(--green);font-size:12px;padding:1px 7px;border-radius:999px;margin-left:6px}
+.panel[hidden]{display:none}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.toolbar input,.toolbar select{padding:9px 14px;border:1px solid var(--sand);border-radius:12px;background:#fff}
+.toolbar .sp{flex:1}
+.empty{background:#fff;border:1px dashed var(--sand);border-radius:18px;padding:40px;text-align:center;color:var(--muted)}
+
+/* booking cards */
+.list{display:grid;gap:12px}
+.bk{background:#fff;border:1px solid var(--sand);border-radius:18px;padding:18px 20px;display:grid;grid-template-columns:1.3fr 1fr auto;gap:18px;align-items:center}
+.bk h4{font-size:17px;color:var(--green)}
+.bk .sub{color:var(--muted);font-size:14px}
+.bk .when b{color:var(--green)}
+.bk .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.contact{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.contact a{display:inline-flex;align-items:center;gap:5px;font-size:13px;text-decoration:none;background:var(--beige);padding:4px 10px;border-radius:999px;color:var(--green)}
+.contact .i{width:14px;height:14px}
+.msgq{grid-column:1/-1;background:var(--cream);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--ink)}
+.warnline{grid-column:1/-1;background:var(--badbg);color:var(--bad);border-radius:12px;padding:8px 14px;font-size:14px;font-weight:500}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border-radius:999px}
+.p-pending{background:var(--warnbg);color:var(--warn)}.p-confirmed{background:var(--okbg);color:var(--ok)}
+.p-declined,.p-cancelled{background:var(--badbg);color:var(--bad)}.p-blocked{background:var(--greybg);color:var(--grey)}
+.paid{font-size:12px;font-weight:600;color:var(--ok)}.unpaid{font-size:12px;font-weight:600;color:var(--bad)}
+
+/* table */
+.tbl{background:#fff;border:1px solid var(--sand);border-radius:18px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{text-align:left;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:12px 14px;background:var(--cream);border-bottom:1px solid var(--sand);white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid var(--beige);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
+
+/* admin calendar */
+.calhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.calhead h3{font-family:'Lilita One';font-weight:400;font-size:28px;color:var(--green);min-width:220px;text-align:center}
+.nav{width:38px;height:38px;border-radius:50%;border:1px solid var(--sand);background:#fff;cursor:pointer;font-size:18px;color:var(--green)}
+.seg{display:flex;background:#fff;border:1px solid var(--sand);border-radius:999px;padding:3px}
+.seg button{border:0;background:none;padding:7px 14px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--green);color:var(--cream)}
+.cal{background:#fff;border:1px solid var(--sand);border-radius:18px;overflow:hidden}
+.cal table{table-layout:fixed}
+.cal th{text-align:center}
+.cal td{height:92px;vertical-align:top;padding:6px;border-right:1px solid var(--beige);white-space:normal;cursor:pointer;position:relative}
+.cal td:last-child{border-right:0}
+.cal td.out{background:#faf8f4;cursor:default}
+.cal td.past{opacity:.5}
+.cal td.sel{outline:3px solid var(--gold);outline-offset:-3px}
+.cal td.insel{background:#f7f0e3}
+.dn{font-size:13px;font-weight:600;color:var(--muted)}
+.ev{display:block;font-size:11.5px;font-weight:600;border-radius:6px;padding:2px 6px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev.confirmed{background:var(--okbg);color:var(--ok)}
+.ev.blocked{background:var(--greybg);color:var(--grey)}
+.ev.pending{background:var(--warnbg);color:var(--warn)}
+.calbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px;background:#fff;border:1px solid var(--sand);border-radius:16px;padding:14px 16px}
+.calbar .sp{flex:1}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--muted);margin-top:10px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(6,20,17,.55);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto}
+.modal[hidden]{display:none}
+.mcard{background:#fff;border-radius:22px;max-width:560px;width:100%;padding:28px;position:relative}
+.mcard h3{font-family:'Lilita One';font-weight:400;font-size:26px;color:var(--green);margin-bottom:4px}
+.mx{position:absolute;top:12px;right:16px;border:0;background:none;font-size:28px;cursor:pointer;color:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fl{display:block;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:12px}
+.fl input,.fl select,.fl textarea{display:block;width:100%;margin-top:5px;padding:10px 12px;border:1px solid var(--sand);border-radius:12px;background:var(--cream);text-transform:none;letter-spacing:0;font-weight:400;color:var(--ink)}
+.mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.meta{font-size:13px;color:var(--muted);margin-bottom:6px}
+
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--cream);padding:12px 22px;border-radius:999px;font-weight:500;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.toast.bad{background:var(--bad)}
+.toast[hidden]{display:none}
+.loading{opacity:.6;pointer-events:none}
+
+@media (max-width:860px){
+  .stats{grid-template-columns:1fr 1fr}
+  .bk{grid-template-columns:1fr}
+  .bk .acts{justify-content:flex-start}
+  .cal td{height:70px;padding:4px}
+  .ev{font-size:10px;padding:1px 4px}
+  .hact .hide-m{display:none}
+}
+@media (max-width:520px){
+  .wrap{padding:0 14px}
+  .grid2{grid-template-columns:1fr}
+  .brand img{height:36px}.brand b{font-size:17px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-sms" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-5A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+</svg>
+
+<!-- LOGIN -->
+<section class="login" id="loginView">
+  <div class="lcard">
+    <img src="../img/logo_dark.png" alt="Metro Haven">
+    <h1>Admin dashboard</h1>
+    <p>Manage inquiries, bookings and blocked dates.</p>
+    <div class="setup" id="setupNote" hidden><b>Setup needed:</b> the booking backend isn't connected yet. Follow <code>backend/SETUP.md</code>, then paste your Web app URL into <code>js/config.js</code>.</div>
+    <form id="loginForm">
+      <input type="password" id="pw" placeholder="Admin password" autocomplete="current-password" required>
+      <label style="display:flex;gap:8px;align-items:center;justify-content:center;font-size:14px;color:var(--muted);margin-bottom:14px"><input type="checkbox" id="remember" style="width:auto;margin:0"> Keep me signed in on this device</label>
+      <button class="btn btn-dark" type="submit"><svg class="i"><use href="#i-lock"/></svg>Sign in</button>
+    </form>
+    <p class="err" id="loginErr"></p>
+  </div>
+</section>
+
+<!-- APP -->
+<div id="appView" hidden>
+  <header>
+    <div class="wrap">
+      <a class="brand" href="../index.html" target="_blank"><img src="../img/logo_light.png" alt=""><b>METRO HAVEN</b><span>ADMIN</span></a>
+      <div class="hact">
+        <button class="btn btn-sm" id="refreshBtn"><svg class="i"><use href="#i-refresh"/></svg><span class="hide-m">Refresh</span></button>
+        <a class="btn btn-sm hide-m" href="../calendar.html" target="_blank">View calendar</a>
+        <button class="btn btn-sm" id="logoutBtn">Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <div class="stats">
+      <div class="st hl"><small>Pending inquiries</small><b id="sPending">0</b></div>
+      <div class="st"><small>Check-ins next 7 days</small><b id="sSoon">0</b></div>
+      <div class="st"><small>Confirmed this month</small><b id="sMonth">0</b></div>
+      <div class="st"><small>Revenue this month</small><b id="sRev">₱0</b></div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-t="inq" aria-selected="true">Inquiries<span class="n" id="tPending">0</span></button>
+      <button class="tab" role="tab" data-t="up" aria-selected="false">Upcoming</button>
+      <button class="tab" role="tab" data-t="cal" aria-selected="false">Calendar & blocking</button>
+      <button class="tab" role="tab" data-t="all" aria-selected="false">All records</button>
+    </div>
+
+    <section class="panel" id="p-inq"><div class="list" id="inqList"></div></section>
+
+    <section class="panel" id="p-up" hidden>
+      <div class="toolbar"><span class="sp"></span><button class="btn btn-dark btn-sm" data-new="confirmed"><svg class="i"><use href="#i-plus"/></svg>Add booking</button></div>
+      <div class="list" id="upList"></div>
+    </section>
+
+    <section class="panel" id="p-cal" hidden>
+      <div class="calhead">
+        <div class="seg" id="calSuite"></div>
+        <span style="flex:1"></span>
+        <button class="nav" id="cPrev" aria-label="Previous month">‹</button><h3 id="cTitle"></h3><button class="nav" id="cNext" aria-label="Next month">›</button>
+      </div>
+      <div class="cal"><table><thead><tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr></thead><tbody id="cBody"></tbody></table></div>
+      <div class="calbar">
+        <span id="selInfo">Click a start date, then an end date (the check-out day) to select nights.</span>
+        <span class="sp"></span>
+        <button class="btn btn-sm" id="selClear" disabled>Clear</button>
+        <button class="btn btn-sm" id="selBook" disabled>Add booking</button>
+        <button class="btn btn-dark btn-sm" id="selBlock" disabled>Block dates</button>
+      </div>
+      <div class="legend"><span><i style="background:var(--okbg)"></i>Confirmed</span><span><i style="background:var(--greybg)"></i>Blocked</span><span><i style="background:var(--warnbg)"></i>Pending inquiry</span><span>Click a booking to edit it.</span></div>
+    </section>
+
+    <section class="panel" id="p-all" hidden>
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="Search name, phone, reference…">
+        <select id="fStatus"><option value="">All statuses</option><option>pending</option><option>confirmed</option><option>blocked</option><option>declined</option><option>cancelled</option></select>
+        <select id="fSuite"><option value="">All suites</option></select>
+        <span class="sp"></span>
+        <button class="btn btn-sm" id="csvBtn">Export CSV</button>
+      </div>
+      <div class="tbl"><table><thead><tr><th>Ref</th><th>Status</th><th>Suite</th><th>Check-in</th><th>Nights</th><th>Guest</th><th>Contact</th><th>Amount</th><th>Paid</th><th>Source</th></tr></thead><tbody id="allBody"></tbody></table></div>
+    </section>
+    <div style="height:60px"></div>
+  </main>
+</div>
+
+<!-- EDIT / CREATE MODAL -->
+<div class="modal" id="emodal" hidden role="dialog" aria-modal="true">
+  <div class="mcard">
+    <button class="mx" id="eClose" aria-label="Close">×</button>
+    <h3 id="eTitle">Edit booking</h3>
+    <div class="meta" id="eMeta"></div>
+    <form id="eForm">
+      <div class="grid2">
+        <label class="fl">Status<select name="status"><option>pending</option><option>confirmed</option><option>blocked</option><option>declined</option><option>cancelled</option></select></label>
+        <label class="fl">Suite<select name="suite"></select></label>
+        <label class="fl">Check-in<input type="date" name="checkin" required></label>
+        <label class="fl">Check-out<input type="date" name="checkout" required></label>
+        <label class="fl">Adults<input type="number" name="adults" min="0" max="20"></label>
+        <label class="fl">Children / infants<input name="kids" placeholder="0 / 0"></label>
+        <label class="fl">Guest name<input name="name"></label>
+        <label class="fl">Mobile<input name="phone"></label>
+        <label class="fl">Email<input name="email" type="email"></label>
+        <label class="fl">Source<select name="source"><option>website</option><option>admin</option><option>airbnb</option><option>facebook</option><option>walk-in</option></select></label>
+        <label class="fl">Amount (₱)<input name="amount" inputmode="decimal" placeholder="e.g. 5997"></label>
+        <label class="fl">Paid<select name="paid"><option value="no">Not yet</option><option value="yes">Yes</option></select></label>
+      </div>
+      <label class="fl">Guest message<textarea name="message" rows="2" readonly></textarea></label>
+      <label class="fl">Internal notes<textarea name="notes" rows="2" placeholder="Only visible to admins"></textarea></label>
+      <p class="err" id="eErr"></p>
+      <div class="mfoot">
+        <button type="button" class="btn" id="eCancel">Close</button>
+        <button type="submit" class="btn btn-dark" id="eSave">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="../js/config.js"></script>
+<script>
+const SUITES = { ebony:"Ebony Suite", cedar:"Cedar Suite", willow:"Willow Suite" };
+const MAX = { ebony:4, cedar:4, willow:8 };
+const BLOCKING = ["confirmed","blocked"];
+const store = { get(k){ try{ return sessionStorage.getItem(k) || localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v,persist){ try{ (persist?localStorage:sessionStorage).setItem(k,v); }catch(e){} },
+  del(k){ try{ sessionStorage.removeItem(k); localStorage.removeItem(k); }catch(e){} } };
+let KEY = store.get("mh_admin_key");
+let ROWS = [];
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const pad = n => String(n).padStart(2,"0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = String(s).slice(0,10).split("-").map(Number); return new Date(y,m-1,d); };
+const fmt = s => s ? parse(s).toLocaleDateString("en-US",{ weekday:"short", month:"short", day:"numeric" }) : "—";
+const peso = n => "₱" + (Number(n)||0).toLocaleString("en-PH");
+const today = (() => { const t = new Date(); t.setHours(0,0,0,0); return t; })();
+const pill = s => `<span class="pill p-${esc(s)}">${esc(s)}</span>`;
+const guestsTxt = r => r.status === "blocked" ? "—" : `${r.adults||0} adult${r.adults==1?"":"s"}${+r.children?`, ${r.children} child${r.children==1?"":"ren"}`:""}${+r.infants?`, ${r.infants} infant${r.infants==1?"":"s"}`:""}`;
+
+function toast(msg, bad){ const t = $("#toast"); t.textContent = msg; t.className = "toast" + (bad?" bad":""); t.hidden = false; clearTimeout(t._t); t._t = setTimeout(() => t.hidden = true, 3200); }
+
+/* ---------- auth ---------- */
+if(!mhApi.ready()) $("#setupNote").hidden = false;
+$("#loginForm").onsubmit = async e => {
+  e.preventDefault(); $("#loginErr").textContent = "";
+  if(!mhApi.ready()){ $("#loginErr").textContent = "Backend not connected yet — see setup note above."; return; }
+  const k = $("#pw").value;
+  try{ await mhApi.post({ action:"login", key:k }); KEY = k; store.set("mh_admin_key", k, $("#remember").checked); start(); }
+  catch(ex){ $("#loginErr").textContent = ex.message; }
+};
+$("#logoutBtn").onclick = () => { store.del("mh_admin_key"); KEY = null; location.reload(); };
+
+async function start(){
+  $("#loginView").hidden = true; $("#appView").hidden = false;
+  await load();
+}
+async function load(){
+  $("#main").classList.add("loading");
+  try{ ROWS = (await mhApi.post({ action:"list", key:KEY })).rows || []; renderAll(); }
+  catch(ex){ if(/password/i.test(ex.message)){ store.del("mh_admin_key"); location.reload(); } toast(ex.message, true); }
+  finally{ $("#main").classList.remove("loading"); }
+}
+$("#refreshBtn").onclick = load;
+async function update(id, fields, okMsg){
+  try{ await mhApi.post({ action:"update", key:KEY, id, fields }); toast(okMsg || "Saved"); await load(); return true; }
+  catch(ex){ toast(ex.message, true); return false; }
+}
+
+/* ---------- helpers ---------- */
+const overlapsConfirmed = r => ROWS.some(x => x.id !== r.id && x.suite === r.suite && BLOCKING.includes(x.status) && parse(x.checkin) < parse(r.checkout) && parse(x.checkout) > parse(r.checkin));
+function contactLinks(r){
+  const out = [];
+  if(r.phone){ const p = String(r.phone).replace(/[^\d+]/g,""); out.push(`<a href="tel:${esc(p)}"><svg class="i"><use href="#i-phone"/></svg>${esc(r.phone)}</a>`, `<a href="sms:${esc(p)}"><svg class="i"><use href="#i-sms"/></svg>Text</a>`); }
+  if(r.email) out.push(`<a href="mailto:${esc(r.email)}?subject=${encodeURIComponent("Your Metro Haven booking "+r.id)}"><svg class="i"><use href="#i-mail"/></svg>${esc(r.email)}</a>`);
+  return out.length ? `<div class="contact">${out.join("")}</div>` : "";
+}
+function card(r, actions){
+  const conflict = r.status === "pending" && overlapsConfirmed(r);
+  return `<div class="bk" data-id="${esc(r.id)}">
+    <div><h4>${esc(r.name || (r.status==="blocked" ? "Blocked dates" : "—"))} ${pill(r.status)}</h4>
+      <div class="sub">${esc(r.id)} · ${esc(SUITES[r.suite]||r.suite)} · via ${esc(r.source||"—")}</div>${contactLinks(r)}</div>
+    <div class="when"><b>${fmt(r.checkin)} → ${fmt(r.checkout)}</b><div class="sub">${r.nights} night${r.nights==1?"":"s"} · ${guestsTxt(r)}</div>
+      <div class="sub">${r.amount?peso(r.amount):"No amount yet"} · <span class="${r.paid==="yes"?"paid":"unpaid"}">${r.paid==="yes"?"Paid":"Unpaid"}</span></div></div>
+    <div class="acts">${actions}</div>
+    ${r.message ? `<div class="msgq">“${esc(r.message)}”</div>` : ""}
+    ${r.notes ? `<div class="msgq" style="background:var(--beige)"><b>Note:</b> ${esc(r.notes)}</div>` : ""}
+    ${conflict ? `<div class="warnline">These dates overlap a confirmed booking or block — accepting is not possible unless you change the dates.</div>` : ""}
+  </div>`;
+}
+
+/* ---------- render ---------- */
+function renderAll(){ renderStats(); renderInq(); renderUp(); renderCal(); renderTable(); }
+function renderStats(){
+  const pend = ROWS.filter(r => r.status==="pending");
+  const in7 = new Date(today); in7.setDate(in7.getDate()+7);
+  const soon = ROWS.filter(r => r.status==="confirmed" && parse(r.checkin) >= today && parse(r.checkin) < in7);
+  const m0 = new Date(today.getFullYear(), today.getMonth(), 1), m1 = new Date(today.getFullYear(), today.getMonth()+1, 1);
+  const month = ROWS.filter(r => r.status==="confirmed" && parse(r.checkin) >= m0 && parse(r.checkin) < m1);
+  $("#sPending").textContent = pend.length; $("#tPending").textContent = pend.length;
+  $("#sSoon").textContent = soon.length; $("#sMonth").textContent = month.length;
+  $("#sRev").textContent = peso(month.reduce((a,r) => a + (Number(r.amount)||0), 0));
+}
+function renderInq(){
+  const rows = ROWS.filter(r => r.status==="pending").sort((a,b) => parse(a.checkin) - parse(b.checkin));
+  $("#inqList").innerHTML = rows.length ? rows.map(r => card(r,
+    `<button class="btn btn-ok btn-sm" data-act="accept" ${overlapsConfirmed(r)?"disabled":""}>Accept</button>
+     <button class="btn btn-bad btn-sm" data-act="decline">Decline</button>
+     <button class="btn btn-sm" data-act="edit">Edit</button>`)).join("")
+   : `<div class="empty">No pending inquiries. New “Book Now” requests from the website will appear here.</div>`;
+}
+function renderUp(){
+  const rows = ROWS.filter(r => BLOCKING.includes(r.status) && parse(r.checkout) >= today).sort((a,b) => parse(a.checkin) - parse(b.checkin));
+  $("#upList").innerHTML = rows.length ? rows.map(r => card(r,
+    `${r.status==="confirmed" && r.paid!=="yes" ? `<button class="btn btn-gold btn-sm" data-act="paid">Mark paid</button>` : ""}
+     <button class="btn btn-sm" data-act="edit">Edit</button>
+     <button class="btn btn-bad btn-sm" data-act="cancel">${r.status==="blocked"?"Unblock":"Cancel"}</button>`)).join("")
+   : `<div class="empty">No upcoming bookings or blocked dates.</div>`;
+}
+function renderTable(){
+  const q = $("#q").value.trim().toLowerCase(), fs = $("#fStatus").value, fsu = $("#fSuite").value;
+  const rows = ROWS.filter(r => (!fs || r.status===fs) && (!fsu || r.suite===fsu) &&
+    (!q || [r.id,r.name,r.phone,r.email,r.notes].join(" ").toLowerCase().includes(q)))
+    .sort((a,b) => String(b.created).localeCompare(String(a.created)));
+  $("#allBody").innerHTML = rows.map(r => `<tr data-id="${esc(r.id)}"><td>${esc(r.id)}</td><td>${pill(r.status)}</td><td>${esc(SUITES[r.suite]||r.suite)}</td>
+    <td>${fmt(r.checkin)}</td><td>${r.nights}</td><td>${esc(r.name||"—")}</td><td>${esc(r.phone||r.email||"—")}</td>
+    <td>${r.amount?peso(r.amount):"—"}</td><td>${r.paid==="yes"?"✓":"—"}</td><td>${esc(r.source||"")}</td></tr>`).join("")
+    || `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:30px">No records</td></tr>`;
+}
+["#q","#fStatus","#fSuite"].forEach(s => $(s).addEventListener("input", renderTable));
+$("#fSuite").innerHTML += Object.entries(SUITES).map(([k,v]) => `<option value="${k}">${v}</option>`).join("");
+$("#allBody").onclick = e => { const tr = e.target.closest("tr[data-id]"); if(tr) openEdit(tr.dataset.id); };
+
+/* card actions */
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]"); if(!b) return;
+  const id = b.closest("[data-id]").dataset.id, r = ROWS.find(x => x.id === id), act = b.dataset.act;
+  if(act==="edit") return openEdit(id);
+  if(act==="accept"){
+    const amt = prompt(`Accept ${r.id} — ${SUITES[r.suite]}, ${fmt(r.checkin)} → ${fmt(r.checkout)}.\n\nTotal amount in ₱ (optional, you can add it later):`, r.amount || "");
+    if(amt === null) return;
+    b.disabled = true; await update(id, { status:"confirmed", amount: amt.replace(/[^\d.]/g,"") }, "Booking accepted — dates are now blocked on the calendar");
+  }
+  if(act==="decline"){ if(confirm(`Decline inquiry ${r.id} from ${r.name}?`)){ b.disabled = true; await update(id, { status:"declined" }, "Inquiry declined"); } }
+  if(act==="paid"){ b.disabled = true; await update(id, { paid:"yes" }, "Marked as paid"); }
+  if(act==="cancel"){ if(confirm(r.status==="blocked" ? "Unblock these dates?" : `Cancel booking ${r.id}? The dates will open up on the calendar.`)){ b.disabled = true; await update(id, { status:"cancelled" }, r.status==="blocked"?"Dates unblocked":"Booking cancelled"); } }
+});
+
+/* tabs */
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", x===t));
+  document.querySelectorAll(".panel").forEach(p => p.hidden = p.id !== "p-"+t.dataset.t);
+});
+
+/* ---------- admin calendar ---------- */
+let cSuite = "ebony", cView = new Date(today.getFullYear(), today.getMonth(), 1), selA = null, selB = null;
+$("#calSuite").innerHTML = Object.entries(SUITES).map(([k,v]) => `<button data-s="${k}" aria-pressed="${k===cSuite}">${v.replace(" Suite","")}</button>`).join("");
+$("#calSuite").onclick = e => { const b = e.target.closest("button"); if(!b) return; cSuite = b.dataset.s; selA = selB = null;
+  $("#calSuite").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x===b)); renderCal(); };
+$("#cPrev").onclick = () => { cView.setMonth(cView.getMonth()-1); renderCal(); };
+$("#cNext").onclick = () => { cView.setMonth(cView.getMonth()+1); renderCal(); };
+function renderCal(){
+  const y = cView.getFullYear(), m = cView.getMonth();
+  $("#cTitle").textContent = cView.toLocaleDateString("en-US",{ month:"long", year:"numeric" });
+  const rows = ROWS.filter(r => r.suite===cSuite && ["confirmed","blocked","pending"].includes(r.status));
+  const first = new Date(y,m,1).getDay(), days = new Date(y,m+1,0).getDate();
+  let h = "<tr>", c = 0;
+  for(let i=0;i<first;i++,c++) h += `<td class="out"></td>`;
+  for(let d=1; d<=days; d++, c++){
+    if(c && c%7===0) h += "</tr><tr>";
+    const dt = new Date(y,m,d), k = iso(dt);
+    const evs = rows.filter(r => parse(r.checkin) <= dt && parse(r.checkout) > dt);
+    const cls = [dt < today ? "past" : "", selA && iso(selA)===k ? "sel" : "", selB && iso(selB)===k ? "sel" : "",
+      selA && selB && dt > selA && dt < selB ? "insel" : ""].join(" ");
+    h += `<td class="${cls}" data-k="${k}"><div class="dn">${d}</div>${evs.map(r => `<span class="ev ${r.status}" data-eid="${esc(r.id)}" title="${esc(r.id)}">${r.status==="blocked"?"Blocked":esc(r.name||r.id)}</span>`).join("")}</td>`;
+  }
+  while(c%7){ h += `<td class="out"></td>`; c++; }
+  $("#cBody").innerHTML = h + "</tr>";
+  const n = selA && selB ? Math.round((selB-selA)/864e5) : 0;
+  $("#selInfo").textContent = !selA ? "Click a start date, then the end date (check-out day) to select nights." :
+    !selB ? `Start: ${fmt(iso(selA))} — now click the check-out day.` : `${SUITES[cSuite]}: ${fmt(iso(selA))} → ${fmt(iso(selB))} · ${n} night${n==1?"":"s"}`;
+  $("#selClear").disabled = !selA; $("#selBook").disabled = $("#selBlock").disabled = !(selA && selB);
+}
+$("#cBody").onclick = e => {
+  const ev = e.target.closest("[data-eid]"); if(ev) return openEdit(ev.dataset.eid);
+  const td = e.target.closest("td[data-k]"); if(!td) return;
+  const d = parse(td.dataset.k);
+  if(!selA || selB || d <= selA){ selA = d; selB = null; } else selB = d;
+  renderCal();
+};
+$("#selClear").onclick = () => { selA = selB = null; renderCal(); };
+$("#selBlock").onclick = async () => {
+  const note = prompt(`Block ${SUITES[cSuite]} from ${fmt(iso(selA))} to ${fmt(iso(selB))}?\n\nReason (optional, e.g. "Airbnb booking", "maintenance"):`, "");
+  if(note === null) return;
+  try{ await mhApi.post({ action:"create", key:KEY, fields:{ suite:cSuite, checkin:iso(selA), checkout:iso(selB), status:"blocked", notes:note, source:"admin" } });
+    toast("Dates blocked"); selA = selB = null; await load(); }
+  catch(ex){ toast(ex.message, true); }
+};
+$("#selBook").onclick = () => openNew("confirmed", { suite:cSuite, checkin:iso(selA), checkout:iso(selB) });
+document.querySelectorAll("[data-new]").forEach(b => b.onclick = () => openNew(b.dataset.new, {}));
+
+/* ---------- edit / create modal ---------- */
+const em = $("#emodal"), ef = $("#eForm");
+ef.suite.innerHTML = Object.entries(SUITES).map(([k,v]) => `<option value="${k}">${v}</option>`).join("");
+let editing = null;
+function fill(r){
+  ["status","suite","checkin","checkout","adults","name","phone","email","amount","paid","notes","message"].forEach(k => ef[k].value = r[k] ?? "");
+  ef.kids.value = `${r.children||0} / ${r.infants||0}`;
+  ef.source.value = r.source || "admin";
+}
+function openEdit(id){
+  const r = ROWS.find(x => x.id === id); if(!r) return;
+  editing = id; $("#eTitle").textContent = "Edit booking";
+  $("#eMeta").textContent = `${r.id} · created ${r.created ? new Date(r.created).toLocaleString() : "—"}`;
+  fill(r); ef.message.closest("label").hidden = !r.message; $("#eErr").textContent = ""; em.hidden = false;
+}
+function openNew(status, pre){
+  editing = null; $("#eTitle").textContent = status==="blocked" ? "Block dates" : "Add booking";
+  $("#eMeta").textContent = "For bookings from Airbnb, Facebook, walk-ins, etc.";
+  fill(Object.assign({ status, suite:"ebony", adults:2, children:0, infants:0, paid:"no", source:"admin" }, pre));
+  ef.message.closest("label").hidden = true; $("#eErr").textContent = ""; em.hidden = false;
+}
+const closeE = () => em.hidden = true;
+$("#eClose").onclick = closeE; $("#eCancel").onclick = closeE;
+em.onclick = e => { if(e.target === em) closeE(); };
+document.addEventListener("keydown", e => { if(e.key==="Escape" && !em.hidden) closeE(); });
+ef.onsubmit = async e => {
+  e.preventDefault();
+  const [ch, inf] = ef.kids.value.split("/").map(x => parseInt(x,10) || 0);
+  const f = { status:ef.status.value, suite:ef.suite.value, checkin:ef.checkin.value, checkout:ef.checkout.value,
+    adults:ef.adults.value, children:ch, infants:inf, name:ef.name.value, phone:ef.phone.value, email:ef.email.value,
+    amount:ef.amount.value.replace(/[^\d.]/g,""), paid:ef.paid.value, notes:ef.notes.value, source:ef.source.value };
+  if(!f.checkin || !f.checkout || f.checkout <= f.checkin){ $("#eErr").textContent = "Check-out must be after check-in."; return; }
+  if((+f.adults) + ch > MAX[f.suite] && f.status !== "blocked"){ $("#eErr").textContent = `${SUITES[f.suite]} fits up to ${MAX[f.suite]} guests.`; return; }
+  $("#eSave").disabled = true;
+  try{
+    if(editing) await mhApi.post({ action:"update", key:KEY, id:editing, fields:f });
+    else await mhApi.post({ action:"create", key:KEY, fields:f });
+    closeE(); toast("Saved"); selA = selB = null; await load();
+  }catch(ex){ $("#eErr").textContent = ex.message; }
+  finally{ $("#eSave").disabled = false; }
+};
+
+/* CSV */
+$("#csvBtn").onclick = () => {
+  const cols = ["id","status","suite","checkin","checkout","nights","adults","children","infants","name","phone","email","amount","paid","source","notes","message","created"];
+  const csv = [cols.join(",")].concat(ROWS.map(r => cols.map(c => `"${String(r[c]??"").replace(/"/g,'""')}"`).join(","))).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download = `metro-haven-bookings-${iso(today)}.csv`; a.click();
+};
+
+if(KEY && mhApi.ready()) start();
+</script>
+</body>
+</html>

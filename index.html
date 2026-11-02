@@ -252,7 +252,9 @@ details.faq p{padding:0 26px 22px;color:var(--muted);font-weight:400;font-size:1
 details.faq[open] .p{transform:rotate(45deg)}
 .faq-grid{align-items:start}
 .menu-btn{display:none;background:none;border:0;cursor:pointer;padding:8px}
-.form-msg{margin-top:12px;font-size:14px;color:var(--green);display:none}
+.form-msg{margin-top:12px;font-size:14.5px;color:var(--ink);display:none;line-height:1.6}
+.form-msg.err{color:#9a3b2b}
+.st-confirmed{color:#1f7a50}.st-pending{color:#a8834f}.st-declined,.st-cancelled{color:#9a3b2b}
 .box input{width:100%;margin-top:6px;background:var(--cream);border:1px solid var(--sand);border-radius:14px;padding:13px 16px;font:inherit;font-size:15px;color:var(--ink)}
 .box input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
 @media (max-width:760px){
@@ -486,10 +488,10 @@ details.faq[open] .p{transform:rotate(45deg)}
       </div>
       <div class="side">
         <div class="box">
-          <h3>Check your booking</h3><p>Enter your reference to see your status and check-in guide.</p>
-          <form onsubmit="event.preventDefault();this.querySelector('.form-msg').style.display='block'"><div class="field"><label>Booking reference</label><input placeholder="MH-000000" required></div>
-          <div class="field"><label>Email address</label><input type="email" placeholder="you@email.com" required></div>
-          <button class="btn btn-dark" type="submit" style="cursor:pointer;font:inherit;font-weight:600">Check status →</button><p class="form-msg">Online booking lookup is coming soon — please message us on Facebook for your booking status.</p></form>
+          <h3>Check your booking</h3><p>Enter your reference number and the mobile number or email you booked with.</p>
+          <form id="statusForm" novalidate><div class="field"><label for="sfId">Booking reference</label><input id="sfId" name="id" placeholder="MH-000000" required autocomplete="off"></div>
+          <div class="field"><label for="sfContact">Mobile number or email</label><input id="sfContact" name="contact" placeholder="09XX XXX XXXX or you@email.com" required></div>
+          <button class="btn btn-dark" id="sfBtn" type="submit" style="cursor:pointer;font:inherit;font-weight:600">Check status →</button><p class="form-msg" id="sfMsg" role="status"></p></form>
         </div>
         <div class="wifi"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#06302a" stroke-width="2.4" stroke-linecap="round"><path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1.2" fill="#06302a"/></svg><p><b>Stay connected!</b> Wi-Fi name, password & QR code are included in your check-in guide.</p></div>
       </div>
@@ -536,6 +538,27 @@ document.querySelectorAll('.suite').forEach(c => {
   const a = c.querySelector('h3 a'); const p = c.querySelector('.photos');
   if(a && p) p.addEventListener('click', () => location.href = a.getAttribute('href'));
 });
+</script>
+<script src="js/config.js"></script>
+<script>
+(function(){
+  const f = document.getElementById("statusForm"); if(!f) return;
+  const msg = document.getElementById("sfMsg"), btn = document.getElementById("sfBtn");
+  const LABEL = { pending:"Pending — we're reviewing your request", confirmed:"Confirmed", declined:"Declined", cancelled:"Cancelled" };
+  const fmt = d => new Date(d + "T00:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+  f.onsubmit = async e => {
+    e.preventDefault(); msg.style.display = "block"; msg.className = "form-msg";
+    if(!window.mhApi || !mhApi.ready()){ msg.textContent = "Online lookup isn't available yet — please message us on Facebook."; return; }
+    const id = f.id.value.trim(), contact = f.contact.value.trim();
+    if(!id || !contact){ msg.textContent = "Please fill in both fields."; return; }
+    btn.disabled = true; msg.textContent = "Checking…";
+    try{
+      const b = (await mhApi.post({ action:"status", id, contact })).booking;
+      msg.innerHTML = `<b>${b.id}</b> · ${b.suite}<br>${fmt(b.checkin)} → ${fmt(b.checkout)} (${b.nights} night${b.nights>1?"s":""})<br>Status: <b class="st-${b.status}">${LABEL[b.status] || b.status}</b>`;
+    }catch(ex){ msg.textContent = ex.message; msg.className = "form-msg err"; }
+    finally{ btn.disabled = false; }
+  };
+})();
 </script>
 </body>
 </html>
