@@ -156,8 +156,8 @@ nav ul a{display:block;color:var(--ink);text-decoration:none;font-weight:500;fon
 .pin .lbl{margin-top:10px;background:var(--cream);padding:8px 14px;border-radius:12px;font-weight:600;color:var(--green);font-size:14px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
 .map .gmap{position:absolute;inset:0;width:100%;height:100%;border:0}
 .near{z-index:1;pointer-events:none}.near>*{pointer-events:auto;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-[id]{scroll-margin-top:100px}
-.near{position:absolute;bottom:20px;left:20px;right:20px;display:flex;gap:8px;flex-wrap:wrap}
+[id]{scroll-margin-top:120px}
+.near{position:absolute;bottom:34px;left:20px;right:20px;display:flex;gap:8px;flex-wrap:wrap}
 .near span{background:var(--cream);padding:6px 12px;border-radius:999px;font-size:13px;border:1px solid var(--sand)}
 .side{display:grid;gap:22px}
 .box{background:#fff;border:1px solid var(--sand);border-radius:28px;padding:34px}
@@ -278,7 +278,7 @@ details.faq[open] .p{transform:rotate(45deg)}
       <li><a href="#reviews">Reviews</a></li>
       <li><a href="#location">Location</a></li>
     </ul>
-    <a class="btn btn-dark" href="#book">Check dates →</a>
+    <a class="btn btn-dark" href="calendar.html">Check dates →</a>
     <button class="menu-btn" aria-label="Menu" onclick="document.querySelector('nav ul').classList.toggle('open')"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06302a" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
 </nav>
@@ -297,7 +297,7 @@ details.faq[open] .p{transform:rotate(45deg)}
         <span class="chip">👥 Up to 8 guests</span>
       </div>
       <div class="ctas">
-        <a class="btn btn-dark" href="#book">Check available dates →</a>
+        <a class="btn btn-dark" href="calendar.html">Check available dates →</a>
         <a class="btn btn-ghost" href="#suites">View our suites</a>
       </div>
     </div>
@@ -332,8 +332,8 @@ details.faq[open] .p{transform:rotate(45deg)}
           <span class="tag">● Book direct</span>
           <h3>Ebony Suite</h3><div class="type">1 BEDROOM · MODERN ELEGANCE</div>
           <ul><li>City view</li><li>Hotel-inspired</li><li>Bed + sofa</li><li>Up to [4] guests</li><li>LED vanity bath</li><li>Board games</li></ul>
-          <div class="price"><div><small>Overnight from</small><b>₱[0,000]</b></div><a class="btn btn-dark" href="#book">Book →</a></div>
-          <div class="next">Next available: <b>Checking calendar…</b></div>
+          <div class="price"><div><small>Overnight from</small><b>₱[0,000]</b></div><a class="btn btn-dark" href="calendar.html?suite=ebony">Book →</a></div>
+          <div class="next"><a href="calendar.html?suite=ebony" style="color:var(--green);font-weight:600">See available dates →</a></div>
         </div>
       </article>
       <article class="suite">
@@ -342,8 +342,8 @@ details.faq[open] .p{transform:rotate(45deg)}
           <span class="tag">● Book direct</span>
           <h3>Cedar Suite</h3><div class="type">1BR · RUSTIC INDUSTRIAL · ★ 4.71</div>
           <ul><li>Double + bunk bed</li><li>Sofa bed</li><li>Up to 4 guests</li><li>Balcony w/ city view</li><li>Shower heater</li><li>Air fryer & kitchen</li></ul>
-          <div class="price"><div><small>Overnight from</small><b>₱[0,000]</b></div><a class="btn btn-dark" href="#book">Book →</a></div>
-          <div class="next">Next available: <b>Checking calendar…</b></div>
+          <div class="price"><div><small>Overnight from</small><b>₱[0,000]</b></div><a class="btn btn-dark" href="calendar.html?suite=cedar">Book →</a></div>
+          <div class="next"><a href="calendar.html?suite=cedar" style="color:var(--green);font-weight:600">See available dates →</a></div>
         </div>
       </article>
       <article class="suite">
@@ -352,8 +352,8 @@ details.faq[open] .p{transform:rotate(45deg)}
           <span class="tag">● Book direct</span>
           <h3>Willow Suite</h3><div class="type">2BR · SPACIOUS & COLORFUL · ★ 4.88</div>
           <ul><li>2 bedrooms · 3 beds</li><li>2 bathrooms</li><li>Up to 8 guests</li><li>6-seat dining</li><li>Balcony lounge</li><li>Great for gatherings</li></ul>
-          <div class="price"><div><small>Overnight from</small><b>₱[0,000]</b></div><a class="btn btn-dark" href="#book">Book →</a></div>
-          <div class="next">Next available: <b>Checking calendar…</b></div>
+          <div class="price"><div><small>Overnight from</small><b>₱[0,000]</b></div><a class="btn btn-dark" href="calendar.html?suite=willow">Book →</a></div>
+          <div class="next"><a href="calendar.html?suite=willow" style="color:var(--green);font-weight:600">See available dates →</a></div>
         </div>
       </article>
     </div>
@@ -384,7 +384,7 @@ details.faq[open] .p{transform:rotate(45deg)}
       <div class="eyebrow" style="color:var(--gold)">Why book direct</div>
       <h2>Same suites. <em>Better rate.</em></h2>
       <p>Booking straight with us skips third-party platform fees — the savings go back to you, and you talk directly to the hosts who know every suite.</p>
-      <a class="btn btn-gold" style="margin-top:28px" href="#book">Check available dates →</a>
+      <a class="btn btn-gold" style="margin-top:28px" href="calendar.html">Check available dates →</a>
     </div>
     <div class="perks">
       <div class="perk"><div class="k">₱</div><div><b>No platform service fees</b><span>Pay the suite rate — nothing added on top.</span></div></div>
@@ -399,7 +399,7 @@ details.faq[open] .p{transform:rotate(45deg)}
   <div class="wrap">
     <div class="sec-head"><div><div class="eyebrow">How to book</div><h2>Four easy steps <em>to your stay.</em></h2></div></div>
     <div class="steps">
-      <div class="step"><div class="num">1</div><h4>Pick your suite & dates</h4><p>Check the live calendar for Ebony, Cedar or Willow.</p></div>
+      <div class="step"><div class="num">1</div><h4>Pick your suite & dates</h4><p>Check the <a href="calendar.html" style="color:var(--green);font-weight:600">availability calendar</a> for Ebony, Cedar or Willow.</p></div>
       <div class="step"><div class="num">2</div><h4>Send a booking request</h4><p>Fill in your details and number of guests.</p></div>
       <div class="step"><div class="num">3</div><h4>Pay the reservation</h4><p>Scan our payment QR and upload your receipt.</p></div>
       <div class="step"><div class="num">4</div><h4>Get your check-in guide</h4><p>Address, access and Wi-Fi details sent before arrival.</p></div>
@@ -448,8 +448,8 @@ details.faq[open] .p{transform:rotate(45deg)}
     <div class="sec-head"><div><div class="eyebrow">Location</div><h2>Grass Residences, <em>near SM North EDSA.</em></h2></div><p>In the heart of Quezon City. Exact tower and unit details are shared with confirmed guests only.</p></div>
     <div class="loc">
       <div class="map">
-        <iframe class="gmap" title="Map of Grass Residences, Quezon City" src="https://www.google.com/maps?q=Grass+Residences,+SM+North+EDSA,+Quezon+City&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
-        <div class="near"><span>🛍 SM North EDSA · walkway bridge</span><span>🛍 Trinoma</span><span>🎰 Solaire North</span><a class="mapbtn" href="https://www.google.com/maps/search/?api=1&query=Grass+Residences+Quezon+City" target="_blank" rel="noopener">Open in Google Maps ↗</a></div>
+        <iframe class="gmap" title="Map of Grass Residences, Quezon City" src="https://www.google.com/maps?q=The+Grass+Residences,+Quezon+City&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        <div class="near"><span>🛍 SM North EDSA · walkway bridge</span><span>🛍 Trinoma</span><span>🎰 Solaire North</span><a class="mapbtn" href="https://www.google.com/maps/search/?api=1&query=The+Grass+Residences+Quezon+City" target="_blank" rel="noopener">Open in Google Maps ↗</a></div>
       </div>
       <div class="side">
         <div class="box">
@@ -484,14 +484,14 @@ details.faq[open] .p{transform:rotate(45deg)}
   <img src="img/logo_dark.png" alt="" style="height:120px;margin:0 auto 20px">
   <h2>Have a <em>wonderful stay.</em></h2>
   <p>Questions before booking? We're delighted to host you — and only a message away.</p>
-  <div style="display:flex;gap:14px;justify-content:center"><a class="btn btn-dark" href="#book">Book your stay →</a><a class="btn btn-ghost" href="https://www.facebook.com/profile.php?id=61566400330651" target="_blank" rel="noopener">Message us</a></div>
+  <div style="display:flex;gap:14px;justify-content:center"><a class="btn btn-dark" href="calendar.html">Book your stay →</a><a class="btn btn-ghost" href="https://www.facebook.com/profile.php?id=61566400330651" target="_blank" rel="noopener">Message us</a></div>
 </div>
 
 <footer>
   <div class="wrap">
     <div class="fgrid">
       <div><img src="img/logo_light.png" alt=""><div class="tagline">your urban escape.</div><div class="social"><a href="https://www.facebook.com/profile.php?id=61566400330651" target="_blank" rel="noopener">f</a><span>ig</span><span>v</span></div></div>
-      <div><h5>Our Suites</h5><ul><li><a href="#suites">Ebony Suite · 1BR</a></li><li><a href="#suites">Cedar Suite · 1BR</a></li><li><a href="#suites">Willow Suite · 2BR</a></li><li><a href="#book">Availability</a></li></ul></div>
+      <div><h5>Our Suites</h5><ul><li><a href="#suites">Ebony Suite · 1BR</a></li><li><a href="#suites">Cedar Suite · 1BR</a></li><li><a href="#suites">Willow Suite · 2BR</a></li><li><a href="calendar.html">Availability</a></li></ul></div>
       <div><h5>Plan your stay</h5><ul><li><a href="#book">How to book</a></li><li><a href="#book">Payment</a></li><li><a href="#location">Check booking</a></li><li><a href="#rules">House rules</a></li></ul></div>
       <div><h5>Contact</h5><ul><li><a href="https://www.facebook.com/profile.php?id=61566400330651" target="_blank" rel="noopener">Facebook: Metro Haven</a></li><li>Viber: [0917 000 0000]</li><li>[email@metrohaven.ph]</li><li>Privacy policy</li></ul></div>
     </div>

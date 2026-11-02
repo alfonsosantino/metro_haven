@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Availability Calendar — Metro Haven</title>
+<meta name="description" content="Check available dates for Metro Haven's Ebony, Cedar and Willow suites at The Grass Residences, Quezon City.">
+<link rel="icon" href="img/logo_dark.png">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Lilita+One&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* "New Icon" by Set Sail Studios — add your licensed webfont files to /fonts.
+   Until then the page falls back to Italiana, a free look-alike. */
+@font-face{font-family:"New Icon";src:url("fonts/NewIcon-Regular.woff2") format("woff2"),url("fonts/NewIcon-Regular.woff") format("woff"),url("fonts/NewIcon-Regular.otf") format("opentype");font-weight:400;font-style:normal;font-display:swap}
+:root{
+  --green:#06302a; --frame:#243c37; --cream:#fbf7f2; --paper:#fdfcf8; --beige:#efe6da; --sand:#e4d6c3;
+  --head:#d6cbbb; --gold:#c9a675; --gold-dk:#b08a4e; --ink:#1d2b27; --muted:#6b7772; --grid:#dcd6cc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Jost',sans-serif;color:var(--ink);background:var(--cream);line-height:1.5}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+/* top bar */
+header{border-bottom:1px solid var(--sand);background:var(--cream)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:80px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand img{height:54px}
+.brand span{font-family:'Lilita One';font-size:24px;color:var(--green);line-height:.9}
+.brand small{display:block;font-family:'Jost';font-size:12px;letter-spacing:2px;color:var(--gold-dk)}
+.back{text-decoration:none;font-weight:600;color:var(--green);border:2px solid var(--green);padding:10px 20px;border-radius:999px;font-size:15px}
+
+/* intro */
+.intro{text-align:center;padding:48px 0 26px}
+.eyebrow{font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-dk);font-weight:600}
+.intro h1{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:48px;line-height:1.05;margin:10px 0}
+.intro p{color:var(--muted);max-width:560px;margin:0 auto}
+
+/* suite tabs */
+.tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:26px 0 30px}
+.tab{font:inherit;cursor:pointer;border:2px solid var(--green);background:transparent;color:var(--green);padding:10px 22px;border-radius:999px;font-weight:600;font-size:15px}
+.tab small{display:block;font-weight:400;font-size:12px;opacity:.75}
+.tab[aria-selected="true"]{background:var(--green);color:var(--cream)}
+
+.layout{display:grid;grid-template-columns:minmax(0,620px) 1fr;gap:36px;align-items:start;padding-bottom:90px}
+
+/* calendar card — mirrors the social post design */
+.frame{background:var(--frame);padding:22px;border-radius:6px}
+.card{background:var(--paper);border-radius:22px;padding:34px 44px 30px;position:relative}
+.monthbar{display:flex;align-items:center;justify-content:space-between}
+.nav{width:42px;height:42px;border-radius:50%;border:1px solid var(--sand);background:#fff;cursor:pointer;font-size:20px;color:var(--green);display:grid;place-items:center}
+.nav:disabled{opacity:.3;cursor:default}
+.month{font-family:'New Icon','Italiana',serif;font-size:64px;color:var(--green);letter-spacing:2px;line-height:1;text-align:center;flex:1}
+.sub{text-align:center;color:var(--gold-dk);font-weight:500;font-size:18px;margin:10px 0 24px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{background:var(--head);font-weight:500;font-size:13px;letter-spacing:1.5px;color:#4b4a45;padding:6px 0}
+td{border:1px solid var(--grid);height:62px;text-align:center;font-size:21px;color:#3f3f3c;position:relative;padding:0}
+tr:last-child td{border-bottom:0}
+td:first-child{border-left:0} td:last-child{border-right:0}
+td button{all:unset;box-sizing:border-box;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:2px}
+td button:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
+td .tag{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+td.past{color:#c3beb5}
+td.past button{cursor:default}
+td.booked{background:repeating-linear-gradient(135deg,#ece6dc 0 6px,#e3dbcd 6px 12px);color:#a49c8f}
+td.booked .n{text-decoration:line-through}
+td.booked .tag{color:#8f877a}
+td.booked button{cursor:not-allowed}
+td.today .n{border-bottom:2px solid var(--gold)}
+td.sel{background:var(--green);color:var(--cream)}
+td.sel .tag{color:var(--gold)}
+td.range{background:#dce8e2;color:var(--green)}
+.cardfoot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:22px}
+.handle{color:var(--gold-dk);font-weight:700;letter-spacing:.5px}
+.cardfoot img{height:70px}
+
+/* side panel */
+.panel{display:grid;gap:18px}
+.box{background:#fff;border:1px solid var(--sand);border-radius:24px;padding:28px}
+.box h3{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:26px;margin-bottom:6px}
+.box p{color:var(--muted);font-size:15px}
+.legend{display:grid;gap:10px;margin-top:14px;font-size:14.5px}
+.legend div{display:flex;align-items:center;gap:12px}
+.sw{width:30px;height:22px;border-radius:5px;border:1px solid var(--grid);background:var(--paper)}
+.sw.b{background:repeating-linear-gradient(135deg,#ece6dc 0 4px,#e3dbcd 4px 8px)}
+.sw.s{background:var(--green);border-color:var(--green)}
+.sw.r{background:#dce8e2}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.sum div{background:var(--cream);border:1px solid var(--sand);border-radius:14px;padding:12px 14px}
+.sum small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.sum b{color:var(--green);font-size:16px}
+.nights{font-weight:600;color:var(--green);margin-bottom:14px}
+.btn{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;padding:14px 20px;border-radius:999px;font:inherit;font-weight:600;font-size:15.5px;cursor:pointer;text-decoration:none;border:2px solid var(--green)}
+.btn-dark{background:var(--green);color:var(--cream)}
+.btn-dark[aria-disabled="true"]{opacity:.4;pointer-events:none}
+.btn-ghost{background:transparent;color:var(--green);margin-top:10px}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.msg{font-size:13.5px;color:#9a3b2b;margin-top:10px;min-height:1em}
+
+footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font-size:14px}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  header .wrap{height:66px}
+  .brand img{height:42px}.brand span{font-size:19px}
+  .back{padding:8px 14px;font-size:13.5px}
+  .intro{padding:32px 0 10px}
+  .intro h1{font-size:34px}
+  .tabs{margin:18px 0 22px}.tab{padding:8px 14px;font-size:14px}
+  .frame{padding:10px}
+  .card{padding:22px 12px 18px;border-radius:16px}
+  .month{font-size:38px}
+  .nav{width:34px;height:34px;font-size:16px}
+  .sub{font-size:14.5px;margin:6px 0 16px}
+  th{font-size:10.5px;letter-spacing:.5px}
+  td{height:50px;font-size:16px}
+  td .tag{font-size:8px;letter-spacing:.3px}
+  .cardfoot img{height:48px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo_dark.png" alt="Metro Haven logo"><span>METRO HAVEN<small>your urban escape.</small></span></a>
+    <a class="back" href="index.html">← Back to home</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div class="eyebrow">Availability</div>
+    <h1>Check available dates</h1>
+    <p>Pick a suite, then tap your check-in and check-out dates. Striped dates are already booked.</p>
+  </section>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+
+  <div class="layout">
+    <div class="frame">
+      <div class="card" id="card">
+        <div class="monthbar">
+          <button class="nav" id="prev" aria-label="Previous month">‹</button>
+          <div class="month" id="month">NOVEMBER</div>
+          <button class="nav" id="next" aria-label="Next month">›</button>
+        </div>
+        <div class="sub" id="sub">Ebony Suite | Tower 3 19th Flr</div>
+        <table>
+          <thead><tr><th>SUN</th><th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th></tr></thead>
+          <tbody id="grid"></tbody>
+        </table>
+        <div class="cardfoot"><span class="handle">@METROHAVEN</span><img src="img/logo_dark.png" alt=""></div>
+      </div>
+    </div>
+
+    <aside class="panel">
+      <div class="box">
+        <h3>Your dates</h3>
+        <p id="hint">Tap a date on the calendar to set your check-in.</p>
+        <div class="sum">
+          <div><small>Check-in</small><b id="cin">—</b></div>
+          <div><small>Check-out</small><b id="cout">—</b></div>
+        </div>
+        <div class="nights" id="nights"></div>
+        <a class="btn btn-dark" id="request" aria-disabled="true" target="_blank" rel="noopener" href="#">Request on Messenger →</a>
+        <button class="btn btn-ghost" id="clear" type="button">Clear dates</button>
+        <p class="msg" id="msg" role="status"></p>
+        <p class="note">Your booking is confirmed once we reply and payment is received. Check-in [2:00 PM] · Check-out [12:00 NN].</p>
+      </div>
+      <div class="box">
+        <h3>Legend</h3>
+        <div class="legend">
+          <div><span class="sw"></span>Available</div>
+          <div><span class="sw b"></span>Booked</div>
+          <div><span class="sw s"></span>Your check-in / check-out</div>
+          <div><span class="sw r"></span>Your stay</div>
+        </div>
+        <button class="btn btn-ghost" id="save" type="button" style="margin-top:18px">Save calendar as image ↓</button>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer>© 2026 Metro Haven · The Grass Residences, Quezon City</footer>
+
+<script src="bookings.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const SUITES = {
+  ebony:  { name: "Ebony Suite",  where: "Tower 3 19th Flr", type: "1BR" },
+  cedar:  { name: "Cedar Suite",  where: "Tower 1",          type: "1BR" },
+  willow: { name: "Willow Suite", where: "[Tower · Floor]",  type: "2BR" }
+};
+const MESSENGER = "https://m.me/61566400330651";
+const MONTHS = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+const BOOKINGS = window.METRO_HAVEN_BOOKINGS || {};
+
+const pad = n => String(n).padStart(2,"0");
+const key = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const nice = d => d.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+const today = new Date(); today.setHours(0,0,0,0);
+
+const params = new URLSearchParams(location.search);
+let suite = SUITES[params.get("suite")] ? params.get("suite") : "ebony";
+let view = new Date(today.getFullYear(), today.getMonth(), 1);
+let checkIn = null, checkOut = null;
+
+function bookedNights(s){
+  const set = new Set();
+  (BOOKINGS[s] || []).forEach(b => {
+    if(!b || !b.in || !b.out) return;
+    for(let d = parse(b.in); d < parse(b.out); d.setDate(d.getDate()+1)) set.add(key(d));
+  });
+  return set;
+}
+
+function renderTabs(){
+  const el = document.getElementById("tabs");
+  el.innerHTML = Object.entries(SUITES).map(([id,s]) =>
+    `<button class="tab" role="tab" aria-selected="${id===suite}" data-id="${id}">${s.name}<small>${s.type} · ${s.where}</small></button>`).join("");
+  el.querySelectorAll(".tab").forEach(b => b.onclick = () => {
+    suite = b.dataset.id; checkIn = checkOut = null;
+    history.replaceState(null,"",`?suite=${suite}`);
+    renderTabs(); render();
+  });
+}
+
+function render(){
+  const booked = bookedNights(suite);
+  const y = view.getFullYear(), m = view.getMonth();
+  document.getElementById("month").textContent = MONTHS[m];
+  document.getElementById("sub").textContent = `${SUITES[suite].name} | ${SUITES[suite].where}`;
+  document.getElementById("prev").disabled = (y === today.getFullYear() && m === today.getMonth());
+
+  const first = new Date(y, m, 1).getDay();
+  const days = new Date(y, m+1, 0).getDate();
+  let html = "<tr>", cell = 0;
+  for(let i=0;i<first;i++,cell++) html += "<td></td>";
+  for(let d=1; d<=days; d++, cell++){
+    if(cell && cell%7===0) html += "</tr><tr>";
+    const date = new Date(y, m, d), k = key(date);
+    const cls = [], past = date < today, isBooked = booked.has(k);
+    let tag = "";
+    if(past) cls.push("past");
+    else if(isBooked) { cls.push("booked"); tag = "Booked"; }
+    if(+date === +today) cls.push("today");
+    if(checkIn && +date === +checkIn){ cls.push("sel"); tag = "In"; }
+    if(checkOut && +date === +checkOut){ cls.push("sel"); tag = "Out"; }
+    if(checkIn && checkOut && date > checkIn && date < checkOut) cls.push("range");
+    html += `<td class="${cls.join(" ")}"><button data-k="${k}" ${past?"disabled":""} aria-label="${nice(date)}${isBooked?" (booked)":""}"><span class="n">${d}</span>${tag?`<span class="tag">${tag}</span>`:""}</button></td>`;
+  }
+  while(cell%7){ html += "<td></td>"; cell++; }
+  html += "</tr>";
+  const grid = document.getElementById("grid");
+  grid.innerHTML = html;
+  grid.querySelectorAll("button[data-k]").forEach(b => b.onclick = () => pick(parse(b.dataset.k), booked));
+  updatePanel();
+}
+
+function pick(date, booked){
+  const msg = document.getElementById("msg"); msg.textContent = "";
+  if(date < today) return;
+  if(!checkIn || checkOut || date <= checkIn){
+    if(booked.has(key(date))){ msg.textContent = "That night is already booked — please choose another check-in date."; return; }
+    checkIn = date; checkOut = null;
+  } else {
+    for(let d = new Date(checkIn); d < date; d.setDate(d.getDate()+1)){
+      if(booked.has(key(d))){ msg.textContent = "Your stay overlaps a booked night. Please pick an earlier check-out."; return; }
+    }
+    checkOut = date;
+  }
+  render();
+}
+
+function updatePanel(){
+  document.getElementById("cin").textContent = checkIn ? nice(checkIn) : "—";
+  document.getElementById("cout").textContent = checkOut ? nice(checkOut) : "—";
+  const hint = document.getElementById("hint"), req = document.getElementById("request"), n = document.getElementById("nights");
+  if(checkIn && checkOut){
+    const nights = Math.round((checkOut - checkIn)/864e5);
+    n.textContent = `${nights} night${nights>1?"s":""} · ${SUITES[suite].name}`;
+    hint.textContent = "Looks good! Send us a request and we'll confirm.";
+    const text = `Hi Metro Haven! I'd like to book the ${SUITES[suite].name} — check-in ${nice(checkIn)}, check-out ${nice(checkOut)} (${nights} night${nights>1?"s":""}). Is it available?`;
+    req.href = `${MESSENGER}?text=${encodeURIComponent(text)}`;
+    req.setAttribute("aria-disabled","false");
+  } else {
+    n.textContent = "";
+    hint.textContent = checkIn ? "Now tap your check-out date." : "Tap a date on the calendar to set your check-in.";
+    req.href = "#"; req.setAttribute("aria-disabled","true");
+  }
+}
+
+document.getElementById("prev").onclick = () => { view.setMonth(view.getMonth()-1); render(); };
+document.getElementById("next").onclick = () => { view.setMonth(view.getMonth()+1); render(); };
+document.getElementById("clear").onclick = () => { checkIn = checkOut = null; document.getElementById("msg").textContent=""; render(); };
+document.getElementById("save").onclick = async () => {
+  if(!window.html2canvas) return;
+  const card = document.getElementById("card").parentElement;
+  const navs = card.querySelectorAll(".nav"); navs.forEach(n => n.style.visibility="hidden");
+  const canvas = await html2canvas(card, {scale:2, backgroundColor:null, useCORS:true});
+  navs.forEach(n => n.style.visibility="");
+  const a = document.createElement("a");
+  a.download = `metro-haven-${suite}-${MONTHS[view.getMonth()].toLowerCase()}-${view.getFullYear()}.png`;
+  a.href = canvas.toDataURL("image/png"); a.click();
+};
+
+renderTabs(); render();
+</script>
+</body>
+</html>
