@@ -4,7 +4,7 @@
    paste the Web app URL below, between the quotes.
    ========================================================= */
 window.METRO_HAVEN_CONFIG = {
-  API_URL: ""   // e.g. "https://script.google.com/macros/s/AKfy.../exec"
+  API_URL: "https://script.google.com/macros/s/AKfycby75-Ib_epN_mun9gHriKczAxhpLu_GwznwwxRVzJQ3IqjnNYITG29pWL_OPUej27_qsQ/exec"   // e.g. "https://script.google.com/macros/s/AKfy.../exec"
 };
 
 /* Small helper used by the calendar, homepage and admin pages. */
