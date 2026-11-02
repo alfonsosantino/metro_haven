@@ -164,8 +164,8 @@ def page(key):
       <section class="block">
         <h2>Good to know</h2>
         <div class="know">
-          <div>{ic("clock")}<span><small>Check-in</small><b>[2:00 PM]</b></span></div>
-          <div>{ic("clock")}<span><small>Check-out</small><b>[12:00 NN]</b></span></div>
+          <div>{ic("clock")}<span><small>Check-in</small><b>3:00 PM</b></span></div>
+          <div>{ic("clock")}<span><small>Check-out</small><b>12:00 NN</b></span></div>
           <div>{ic("users")}<span><small>Extra guest</small><b>₱250 / night</b></span></div>
         </div>
         <p class="small">Please read our <a href="index.html#rules">house rules</a> before booking. Exact tower and unit details are sent once your booking is confirmed.</p>
