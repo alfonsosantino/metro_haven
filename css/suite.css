@@ -1,0 +1,168 @@
+/* Shared styles for the suite pages (ebony-suite.html, cedar-suite.html, willow-suite.html) */
+:root{
+  --green:#06302a; --cream:#fbf7f2; --beige:#efe6da; --sand:#e4d6c3;
+  --gold:#c9a675; --gold-dk:#a8834f; --ink:#1d2b27; --muted:#5f6d68;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;color:var(--ink);background:var(--cream);font-size:17px;line-height:1.6}
+img{display:block;max-width:100%}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+.i{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.i.fill{fill:currentColor;stroke:none}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 26px;border-radius:999px;font-weight:600;font-size:16px;text-decoration:none;border:2px solid var(--green);font-family:inherit;cursor:pointer}
+.btn-dark{background:var(--green);color:var(--cream)}
+.btn-ghost{background:transparent;color:var(--green)}
+
+/* nav */
+nav{position:sticky;top:0;background:rgba(251,247,242,.96);border-bottom:1px solid var(--sand);z-index:20}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:84px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand img{height:58px}
+.brand span{font-family:'Lilita One';font-size:26px;color:var(--green);line-height:.9}
+.brand small{display:block;font-family:'Jost';font-size:12px;letter-spacing:2px;color:var(--gold-dk)}
+nav ul{display:flex;gap:32px;list-style:none}
+nav ul a{display:block;color:var(--ink);text-decoration:none;font-weight:500;font-size:15.5px}
+.menu-btn{display:none;background:none;border:0;cursor:pointer;padding:8px}
+
+/* header */
+.crumbs{font-size:14px;color:var(--muted);padding:26px 0 10px}
+.crumbs a{text-decoration:none;color:var(--gold-dk);font-weight:500}
+.crumbs span{color:var(--ink)}
+.eyebrow{font-size:13px;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold-dk);font-weight:600}
+h1{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:60px;line-height:1;margin:8px 0 12px}
+.meta{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;color:var(--muted);font-size:15.5px}
+.meta span,.rating{display:inline-flex;align-items:center;gap:7px}
+.meta .i{color:var(--gold-dk)}
+.rating{text-decoration:none;color:var(--ink)}
+.rating .i{color:var(--gold)}
+
+/* gallery */
+.gallery{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:230px 230px;gap:10px;margin:28px 0 46px;border-radius:26px;overflow:hidden;position:relative}
+.g{all:unset;cursor:pointer;overflow:hidden;display:block}
+.g img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.g:hover img{transform:scale(1.04)}
+.g:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+.g-main{grid-row:span 2}
+.all{position:absolute;right:18px;bottom:18px;display:inline-flex;align-items:center;gap:8px;background:var(--cream);border:1px solid var(--green);color:var(--green);border-radius:12px;padding:9px 16px;font:inherit;font-weight:600;font-size:14.5px;cursor:pointer}
+
+/* layout */
+.layout{display:grid;grid-template-columns:1fr 380px;gap:60px;align-items:start}
+.lead{font-size:21px;color:var(--ink);line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 10px}
+.stat{background:#fff;border:1px solid var(--sand);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;font-weight:500;color:var(--green);font-size:15.5px}
+.stat .i{width:28px;height:28px;color:var(--gold-dk)}
+.block{border-top:1px solid var(--sand);padding:34px 0;margin-top:24px}
+.block h2{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:30px;margin-bottom:14px}
+.block p{color:var(--muted);margin-bottom:12px}
+.hl{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hl li,.am li,.perks li{display:flex;align-items:center;gap:10px}
+.hl li{background:var(--beige);border-radius:14px;padding:14px 16px;font-weight:500;color:var(--green)}
+.hl .i,.am .i,.perks .i{color:var(--gold-dk);width:18px;height:18px}
+.amen{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.am h4{font-size:15px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-dk);margin-bottom:10px}
+.am ul{list-style:none;display:grid;gap:8px;color:var(--ink);font-size:15.5px}
+.know{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.know div{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--sand);border-radius:16px;padding:16px}
+.know .i{width:26px;height:26px;color:var(--gold-dk)}
+.know small{display:block;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.know b{color:var(--green)}
+.small{font-size:15px}
+.small a{color:var(--green);font-weight:600}
+
+/* booking card */
+.book{position:sticky;top:110px}
+.bcard{background:#fff;border:1px solid var(--sand);border-radius:26px;padding:30px;box-shadow:0 18px 40px rgba(6,48,42,.08)}
+.price small{display:block;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.price b{font-family:'Lilita One';font-weight:400;font-size:46px;color:var(--green);line-height:1.1}
+.price span{color:var(--muted);margin-left:4px}
+.pnote{font-size:13.5px;color:var(--muted);margin:6px 0 20px}
+.bcard .btn{width:100%;margin-bottom:10px}
+.perks{list-style:none;display:grid;gap:8px;margin:16px 0 4px;font-size:14.5px;color:var(--ink);border-top:1px dashed var(--sand);padding-top:16px}
+.link{display:inline-block;margin-top:12px;color:var(--gold-dk);font-weight:600;font-size:14.5px;text-decoration:none}
+
+/* other suites */
+.others{border-top:1px solid var(--sand);margin-top:30px;padding:46px 0 90px}
+.others h2{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:36px;margin-bottom:22px}
+.ogrid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.oc{display:grid;grid-template-columns:200px 1fr;background:#fff;border:1px solid var(--sand);border-radius:22px;overflow:hidden;text-decoration:none;transition:box-shadow .2s}
+.oc:hover{box-shadow:0 14px 30px rgba(6,48,42,.1)}
+.oc img{width:100%;height:100%;min-height:150px;object-fit:cover}
+.oc div{padding:22px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+.ot{font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dk);font-weight:600}
+.oc b{font-family:'Lilita One';font-weight:400;font-size:28px;color:var(--green)}
+.op{color:var(--muted);font-size:15px}
+.op strong{color:var(--green)}
+
+/* mobile booking bar */
+.mbar{display:none}
+
+/* lightbox */
+.lb{position:fixed;inset:0;background:rgba(6,20,17,.94);z-index:50;display:flex;align-items:center;justify-content:center}
+.lb[hidden]{display:none}
+.lb img{max-width:min(90vw,900px);max-height:84vh;border-radius:12px}
+.lb button{all:unset;cursor:pointer;color:#fff;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.1)}
+.lb button:focus-visible{outline:2px solid var(--gold)}
+.lb .i{width:24px;height:24px}
+.lbx{position:absolute;top:20px;right:20px}
+.lbp{position:absolute;left:20px}
+.lbnx{position:absolute;right:20px}
+.lbc{position:absolute;bottom:22px;color:#cfd8d4;font-size:14px;letter-spacing:2px}
+
+footer{background:var(--green);color:#b9c8c1;padding:50px 0 30px;text-align:center;font-size:15px}
+footer img{height:90px;margin:0 auto 18px}
+.flinks{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 26px;margin-bottom:22px}
+.flinks a{text-decoration:none}
+.fbot{font-size:13.5px;border-top:1px solid rgba(255,255,255,.1);padding-top:20px}
+
+@media (max-width:980px){
+  .layout{grid-template-columns:1fr;gap:10px}
+  .book{position:static}
+  .ogrid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  body{font-size:16px;padding-bottom:78px}
+  .wrap{padding:0 18px}
+  nav .wrap{height:68px}
+  .brand img{height:44px}.brand span{font-size:20px}
+  nav ul{display:none}
+  nav ul.open{display:flex;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:var(--cream);padding:18px;gap:16px;border-bottom:1px solid var(--sand)}
+  .nav-cta{display:none}
+  .menu-btn{display:block}
+  h1{font-size:40px}
+  .gallery{grid-template-columns:1fr 1fr;grid-template-rows:240px 130px;margin:20px -18px 30px;border-radius:0}
+  .g-main{grid-row:auto;grid-column:span 2}
+  .g:nth-child(n+4){display:none}
+  .lead{font-size:18px}
+  .stats{grid-template-columns:1fr 1fr}
+  .hl,.amen,.know{grid-template-columns:1fr}
+  .block h2{font-size:26px}
+  .oc{grid-template-columns:120px 1fr}
+  .oc b{font-size:22px}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--sand);padding:12px 18px;align-items:center;justify-content:space-between;box-shadow:0 -6px 20px rgba(0,0,0,.06)}
+  .mbar b{font-family:'Lilita One';font-weight:400;font-size:24px;color:var(--green)}
+  .mbar span{color:var(--muted);font-size:14px}
+  .mbar small{display:block;font-size:12px;color:var(--muted);margin-top:-4px}
+  .mbar .btn{padding:12px 22px}
+  .lbp{left:8px}.lbnx{right:8px}
+}
+
+/* Inside-the-suite groups */
+.groups{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grp{background:#fff;border:1px solid var(--sand);border-radius:20px;padding:22px 24px}
+.gh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.gh .i{width:38px;height:38px;padding:8px;border-radius:12px;background:var(--green);color:var(--cream)}
+.gh h4{font-family:'Lilita One';font-weight:400;font-size:21px;color:var(--green)}
+.grp ul,.bl{list-style:none;display:grid;gap:8px;font-size:15.5px}
+.grp li,.bl li{display:flex;align-items:flex-start;gap:10px}
+.grp li .i,.bl li .i{color:var(--gold-dk);width:18px;height:18px;margin-top:3px}
+.bl{grid-template-columns:1fr 1fr}
+.closing{background:var(--beige);border:0;border-radius:24px;padding:34px 34px 22px}
+.closing .eyebrow{margin-bottom:8px}
+.closing p{color:var(--ink);font-size:17.5px}
+@media (max-width:760px){
+  .groups,.bl{grid-template-columns:1fr}
+  .closing{padding:26px 22px 14px}
+}

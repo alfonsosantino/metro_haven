@@ -84,10 +84,28 @@ td.range{background:#dce8e2;color:var(--green)}
 .sw.b{background:repeating-linear-gradient(135deg,#ece6dc 0 4px,#e3dbcd 4px 8px)}
 .sw.s{background:var(--green);border-color:var(--green)}
 .sw.r{background:#dce8e2}
-.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
-.sum div{background:var(--cream);border:1px solid var(--sand);border-radius:14px;padding:12px 14px}
-.sum small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.picker{margin:16px 0;border:1px solid #bdb3a4;border-radius:16px;background:var(--cream);position:relative}
+.sum{display:grid;grid-template-columns:1fr 1fr}
+.sum div{padding:12px 16px}
+.sum div+div{border-left:1px solid #bdb3a4}
+.picker small{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600}
 .sum b{color:var(--green);font-size:16px}
+.gbtn{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid #bdb3a4;cursor:pointer}
+.gbtn:focus-visible{outline:2px solid var(--gold);border-radius:0 0 16px 16px}
+.gbtn b{color:var(--green);font-size:16px;font-weight:600}
+.gbtn svg{width:20px;height:20px;stroke:var(--green);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.gbtn[aria-expanded="true"] svg{transform:rotate(180deg)}
+.gpanel{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--sand);border-radius:16px;box-shadow:0 14px 34px rgba(6,48,42,.16);padding:6px 20px 14px;z-index:5}
+.gpanel[hidden]{display:none}
+.grow{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--beige)}
+.grow b{display:block;color:var(--green);font-size:16.5px;font-weight:600}
+.grow span{font-size:14px;color:var(--muted)}
+.step{display:flex;align-items:center;gap:14px}
+.step output{min-width:18px;text-align:center;font-size:16px;color:var(--ink)}
+.step button{width:36px;height:36px;border-radius:50%;border:1px solid #bdb3a4;background:#fff;color:var(--green);font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center;font-family:inherit}
+.step button:disabled{opacity:.3;cursor:not-allowed}
+.gnote{font-size:13px;color:var(--muted);margin-top:12px}
+.gclose{all:unset;cursor:pointer;float:right;margin-top:10px;font-weight:600;color:var(--green);text-decoration:underline;font-size:14.5px}
 .nights{font-weight:600;color:var(--green);margin-bottom:14px}
 .btn{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;padding:14px 20px;border-radius:999px;font:inherit;font-weight:600;font-size:15.5px;cursor:pointer;text-decoration:none;border:2px solid var(--green)}
 .btn-dark{background:var(--green);color:var(--cream)}
@@ -158,17 +176,30 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
 
     <aside class="panel">
       <div class="box">
-        <h3>Your dates</h3>
+        <h3>Your stay</h3>
         <p id="hint">Tap a date on the calendar to set your check-in.</p>
-        <div class="sum">
-          <div><small>Check-in</small><b id="cin">—</b></div>
-          <div><small>Check-out</small><b id="cout">—</b></div>
+        <div class="picker">
+          <div class="sum">
+            <div><small>Check-in</small><b id="cin">—</b></div>
+            <div><small>Check-out</small><b id="cout">—</b></div>
+          </div>
+          <button class="gbtn" id="gbtn" type="button" aria-expanded="false" aria-controls="gpanel">
+            <span><small>Guests</small><b id="glabel">1 guest</b></span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="gpanel" id="gpanel" hidden>
+            <div class="grow"><div><b>Adults</b><span>Age 13+</span></div><div class="step" data-k="adults"><button type="button" data-d="-1" aria-label="Fewer adults">−</button><output>1</output><button type="button" data-d="1" aria-label="More adults">+</button></div></div>
+            <div class="grow"><div><b>Children</b><span>Ages 2–12</span></div><div class="step" data-k="children"><button type="button" data-d="-1" aria-label="Fewer children">−</button><output>0</output><button type="button" data-d="1" aria-label="More children">+</button></div></div>
+            <div class="grow"><div><b>Infants</b><span>Under 2</span></div><div class="step" data-k="infants"><button type="button" data-d="-1" aria-label="Fewer infants">−</button><output>0</output><button type="button" data-d="1" aria-label="More infants">+</button></div></div>
+            <p class="gnote" id="gnote"></p>
+            <button class="gclose" id="gclose" type="button">Close</button>
+          </div>
         </div>
         <div class="nights" id="nights"></div>
         <a class="btn btn-dark" id="request" aria-disabled="true" target="_blank" rel="noopener" href="#">Request on Messenger →</a>
         <button class="btn btn-ghost" id="clear" type="button">Clear dates</button>
         <p class="msg" id="msg" role="status"></p>
-        <p class="note">Your booking is confirmed once we reply and payment is received. Check-in [2:00 PM] · Check-out [12:00 NN].</p>
+        <p class="note">Your booking is confirmed once we reply and payment is received. Check-in [2:00 PM] · Check-out [12:00 NN] · Extra guests ₱250 per guest, per night.</p>
       </div>
       <div class="box">
         <h3>Legend</h3>
@@ -190,10 +221,12 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const SUITES = {
-  ebony:  { name: "Ebony Suite",  where: "Tower 3 19th Flr", type: "1BR" },
-  cedar:  { name: "Cedar Suite",  where: "Tower 1 2nd Flr",  type: "1BR" },
-  willow: { name: "Willow Suite", where: "Tower 1 5th Flr",  type: "2BR" }
+  ebony:  { name: "Ebony Suite",  where: "Tower 3 19th Flr", type: "1BR", max: 4 },
+  cedar:  { name: "Cedar Suite",  where: "Tower 1 2nd Flr",  type: "1BR", max: 4 },
+  willow: { name: "Willow Suite", where: "Tower 1 5th Flr",  type: "2BR", max: 8 }
 };
+const MAX_INFANTS = 2;
+const guests = { adults: 1, children: 0, infants: 0 };
 const MESSENGER = "https://m.me/61566400330651";
 const MONTHS = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
 const BOOKINGS = window.METRO_HAVEN_BOOKINGS || {};
@@ -225,7 +258,7 @@ function renderTabs(){
   el.querySelectorAll(".tab").forEach(b => b.onclick = () => {
     suite = b.dataset.id; checkIn = checkOut = null;
     history.replaceState(null,"",`?suite=${suite}`);
-    renderTabs(); render();
+    renderTabs(); render(); renderGuests();
   });
 }
 
@@ -284,7 +317,7 @@ function updatePanel(){
     const nights = Math.round((checkOut - checkIn)/864e5);
     n.textContent = `${nights} night${nights>1?"s":""} · ${SUITES[suite].name}`;
     hint.textContent = "Looks good! Send us a request and we'll confirm.";
-    const text = `Hi Metro Haven! I'd like to book the ${SUITES[suite].name} — check-in ${nice(checkIn)}, check-out ${nice(checkOut)} (${nights} night${nights>1?"s":""}). Is it available?`;
+    const text = `Hi Metro Haven! I'd like to book the ${SUITES[suite].name} — check-in ${nice(checkIn)}, check-out ${nice(checkOut)} (${nights} night${nights>1?"s":""}), for ${guestText(true)}. Is it available?`;
     req.href = `${MESSENGER}?text=${encodeURIComponent(text)}`;
     req.setAttribute("aria-disabled","false");
   } else {
@@ -308,7 +341,42 @@ document.getElementById("save").onclick = async () => {
   a.href = canvas.toDataURL("image/png"); a.click();
 };
 
-renderTabs(); render();
+function guestText(full){
+  const g = guests.adults + guests.children;
+  if(full){
+    const parts = [`${guests.adults} adult${guests.adults>1?"s":""}`];
+    if(guests.children) parts.push(`${guests.children} child${guests.children>1?"ren":""}`);
+    if(guests.infants) parts.push(`${guests.infants} infant${guests.infants>1?"s":""}`);
+    return parts.join(", ");
+  }
+  let t = `${g} guest${g>1?"s":""}`;
+  if(guests.infants) t += `, ${guests.infants} infant${guests.infants>1?"s":""}`;
+  return t;
+}
+function renderGuests(){
+  const max = SUITES[suite].max;
+  while(guests.adults + guests.children > max){ if(guests.children) guests.children--; else guests.adults--; }
+  document.querySelectorAll(".step").forEach(st => {
+    const k = st.dataset.k, [minus, plus] = st.querySelectorAll("button");
+    st.querySelector("output").textContent = guests[k];
+    minus.disabled = guests[k] <= (k === "adults" ? 1 : 0);
+    plus.disabled = k === "infants" ? guests.infants >= MAX_INFANTS : (guests.adults + guests.children) >= max;
+  });
+  document.getElementById("glabel").textContent = guestText(false);
+  document.getElementById("gnote").textContent = `The ${SUITES[suite].name} fits up to ${max} guests, not counting infants.`;
+  updatePanel();
+}
+document.querySelectorAll(".step button").forEach(b => b.onclick = () => {
+  const k = b.closest(".step").dataset.k; guests[k] += Number(b.dataset.d); renderGuests();
+});
+const gbtn = document.getElementById("gbtn"), gpanel = document.getElementById("gpanel");
+const toggleG = open => { gpanel.hidden = !open; gbtn.setAttribute("aria-expanded", open); };
+gbtn.onclick = () => toggleG(gpanel.hidden);
+document.getElementById("gclose").onclick = () => toggleG(false);
+document.addEventListener("click", e => { if(!gpanel.hidden && !e.target.closest(".picker")) toggleG(false); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") toggleG(false); });
+
+renderTabs(); render(); renderGuests();
 </script>
 </body>
 </html>
