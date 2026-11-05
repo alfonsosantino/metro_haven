@@ -273,7 +273,7 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
 <footer>© 2026 Metro Haven · The Grass Residences, Quezon City</footer>
 
 <script src="bookings.js"></script>
-<script src="js/config.js?v=3"></script>
+<script src="js/config.js?v=4"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const SUITES = {
@@ -440,11 +440,11 @@ const API_ON = window.mhApi && mhApi.ready();
 async function loadLive(){
   if(!API_ON) return;
   try{
-    const j = await mhApi.get({ action: "dates" });
+    const live = await mhApi.dates();
     const merged = {};
-    Object.keys(SUITES).forEach(k => merged[k] = [].concat(BOOKINGS[k] || [], (j.dates && j.dates[k]) || []));
+    Object.keys(SUITES).forEach(k => merged[k] = [].concat(BOOKINGS[k] || [], live[k] || []));
     BOOKINGS = merged;
-    const live = document.getElementById("live"); live.classList.add("on"); live.querySelector("span").textContent = "Live availability";
+    const liveEl = document.getElementById("live"); liveEl.classList.add("on"); liveEl.querySelector("span").textContent = "Live availability";
     render();
   }catch(e){ /* keep calendar file data */ }
 }
@@ -474,10 +474,10 @@ document.getElementById("bform").onsubmit = async e => {
   if(email && !/^\S+@\S+\.\S+$/.test(email)){ err.textContent = "Please check your email address."; return; }
   err.textContent = ""; btn.disabled = true; btn.textContent = "Sending…";
   try{
-    const j = await mhApi.post({ action: "inquire", suite, checkin: key(checkIn), checkout: key(checkOut),
+    const id = await mhApi.inquire({ suite, checkin: key(checkIn), checkout: key(checkOut),
       adults: guests.adults, children: guests.children, infants: guests.infants,
       name, phone, email, message: f.message.value.trim(), website: f.website.value });
-    document.getElementById("bmRef").textContent = j.id;
+    document.getElementById("bmRef").textContent = id;
     document.getElementById("bmForm").hidden = true; document.getElementById("bmDone").hidden = false;
     f.reset();
   }catch(ex){ err.textContent = ex.message || "Something went wrong. Please try again or message us on Messenger."; loadLive(); }

@@ -539,7 +539,7 @@ document.querySelectorAll('.suite').forEach(c => {
   if(a && p) p.addEventListener('click', () => location.href = a.getAttribute('href'));
 });
 </script>
-<script src="js/config.js?v=3"></script>
+<script src="js/config.js?v=4"></script>
 <script>
 (function(){
   const f = document.getElementById("statusForm"); if(!f) return;
@@ -553,7 +553,7 @@ document.querySelectorAll('.suite').forEach(c => {
     if(!id || !contact){ msg.textContent = "Please fill in both fields."; return; }
     btn.disabled = true; msg.textContent = "Checking…";
     try{
-      const b = (await mhApi.post({ action:"status", id, contact })).booking;
+      const b = await mhApi.status(id, contact);
       msg.innerHTML = `<b>${b.id}</b> · ${b.suite}<br>${fmt(b.checkin)} → ${fmt(b.checkout)} (${b.nights} night${b.nights>1?"s":""})<br>Status: <b class="st-${b.status}">${LABEL[b.status] || b.status}</b>`;
     }catch(ex){ msg.textContent = ex.message; msg.className = "form-msg err"; }
     finally{ btn.disabled = false; }

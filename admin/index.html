@@ -31,7 +31,7 @@ a{color:inherit}
 .lcard img{height:90px;margin:0 auto 10px;display:block}
 .lcard h1{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:30px}
 .lcard p{color:var(--muted);font-size:14.5px;margin:4px 0 22px}
-.lcard input{width:100%;padding:13px 16px;border:1px solid var(--sand);background:var(--cream);border-radius:14px;margin-bottom:12px}
+.lcard input[type=email],.lcard input[type=password]{width:100%;padding:13px 16px;border:1px solid var(--sand);background:var(--cream);border-radius:14px;margin-bottom:12px}
 .lcard .btn{width:100%}
 .err{color:var(--bad);font-size:14px;min-height:1.2em;margin-top:10px}
 .setup{background:var(--warnbg);border-radius:14px;padding:14px;font-size:14px;color:var(--ink);text-align:left;margin-bottom:16px}
@@ -164,9 +164,10 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
     <img src="../img/logo_dark.png" alt="Metro Haven">
     <h1>Admin dashboard</h1>
     <p>Manage inquiries, bookings and blocked dates.</p>
-    <div class="setup" id="setupNote" hidden><b>Setup needed:</b> the booking backend isn't connected yet. Follow <code>backend/SETUP.md</code>, then paste your Web app URL into <code>js/config.js</code>.</div>
+    <div class="setup" id="setupNote" hidden><b>Setup needed:</b> the booking backend isn't connected yet. Add your Supabase URL and publishable key in <code>js/config.js</code>.</div>
     <form id="loginForm">
-      <input type="password" id="pw" placeholder="Admin password" autocomplete="current-password" required>
+      <input type="email" id="em" placeholder="Admin email" autocomplete="username" required>
+      <input type="password" id="pw" placeholder="Password" autocomplete="current-password" required>
       <label style="display:flex;gap:8px;align-items:center;justify-content:center;font-size:14px;color:var(--muted);margin-bottom:14px"><input type="checkbox" id="remember" style="width:auto;margin:0"> Keep me signed in on this device</label>
       <button class="btn btn-dark" type="submit"><svg class="i"><use href="#i-lock"/></svg>Sign in</button>
     </form>
@@ -274,7 +275,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="../js/config.js?v=3"></script>
+<script src="../js/config.js?v=4"></script>
 <script>
 const SUITES = { ebony:"Ebony Suite", cedar:"Cedar Suite", willow:"Willow Suite" };
 const MAX = { ebony:4, cedar:4, willow:8 };
@@ -282,7 +283,6 @@ const BLOCKING = ["confirmed","blocked"];
 const store = { get(k){ try{ return sessionStorage.getItem(k) || localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v,persist){ try{ (persist?localStorage:sessionStorage).setItem(k,v); }catch(e){} },
   del(k){ try{ sessionStorage.removeItem(k); localStorage.removeItem(k); }catch(e){} } };
-let KEY = store.get("mh_admin_key");
 let ROWS = [];
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
@@ -302,11 +302,12 @@ if(!mhApi.ready()) $("#setupNote").hidden = false;
 $("#loginForm").onsubmit = async e => {
   e.preventDefault(); $("#loginErr").textContent = "";
   if(!mhApi.ready()){ $("#loginErr").textContent = "Backend not connected yet — see setup note above."; return; }
-  const k = $("#pw").value;
-  try{ await mhApi.post({ action:"login", key:k }); KEY = k; store.set("mh_admin_key", k, $("#remember").checked); start(); }
+  const btn = e.target.querySelector("button"); btn.disabled = true;
+  try{ await mhApi.signIn($("#em").value.trim(), $("#pw").value, $("#remember").checked); $("#pw").value = ""; start(); }
   catch(ex){ $("#loginErr").textContent = ex.message; }
+  finally{ btn.disabled = false; }
 };
-$("#logoutBtn").onclick = () => { store.del("mh_admin_key"); KEY = null; location.reload(); };
+$("#logoutBtn").onclick = async () => { await mhApi.signOut(); location.reload(); };
 
 async function start(){
   $("#loginView").hidden = true; $("#appView").hidden = false;
@@ -314,13 +315,13 @@ async function start(){
 }
 async function load(){
   $("#main").classList.add("loading");
-  try{ ROWS = (await mhApi.post({ action:"list", key:KEY })).rows || []; renderAll(); }
-  catch(ex){ if(/password/i.test(ex.message)){ store.del("mh_admin_key"); location.reload(); } toast(ex.message, true); }
+  try{ ROWS = await mhApi.list(); renderAll(); }
+  catch(ex){ if(/sign in/i.test(ex.message)){ location.reload(); return; } toast(ex.message, true); }
   finally{ $("#main").classList.remove("loading"); }
 }
 $("#refreshBtn").onclick = load;
 async function update(id, fields, okMsg){
-  try{ await mhApi.post({ action:"update", key:KEY, id, fields }); toast(okMsg || "Saved"); await load(); return true; }
+  try{ await mhApi.update(id, fields); toast(okMsg || "Saved"); await load(); return true; }
   catch(ex){ toast(ex.message, true); return false; }
 }
 
@@ -449,7 +450,7 @@ $("#selClear").onclick = () => { selA = selB = null; renderCal(); };
 $("#selBlock").onclick = async () => {
   const note = prompt(`Block ${SUITES[cSuite]} from ${fmt(iso(selA))} to ${fmt(iso(selB))}?\n\nReason (optional, e.g. "Airbnb booking", "maintenance"):`, "");
   if(note === null) return;
-  try{ await mhApi.post({ action:"create", key:KEY, fields:{ suite:cSuite, checkin:iso(selA), checkout:iso(selB), status:"blocked", notes:note, source:"admin" } });
+  try{ await mhApi.create({ suite:cSuite, checkin:iso(selA), checkout:iso(selB), status:"blocked", adults:0, notes:note, source:"admin" });
     toast("Dates blocked"); selA = selB = null; await load(); }
   catch(ex){ toast(ex.message, true); }
 };
@@ -491,8 +492,8 @@ ef.onsubmit = async e => {
   if((+f.adults) + ch > MAX[f.suite] && f.status !== "blocked"){ $("#eErr").textContent = `${SUITES[f.suite]} fits up to ${MAX[f.suite]} guests.`; return; }
   $("#eSave").disabled = true;
   try{
-    if(editing) await mhApi.post({ action:"update", key:KEY, id:editing, fields:f });
-    else await mhApi.post({ action:"create", key:KEY, fields:f });
+    if(editing) await mhApi.update(editing, f);
+    else await mhApi.create(f);
     closeE(); toast("Saved"); selA = selB = null; await load();
   }catch(ex){ $("#eErr").textContent = ex.message; }
   finally{ $("#eSave").disabled = false; }
@@ -505,7 +506,7 @@ $("#csvBtn").onclick = () => {
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download = `metro-haven-bookings-${iso(today)}.csv`; a.click();
 };
 
-if(KEY && mhApi.ready()) start();
+mhApi.session().then(s => { if(s) start(); });
 </script>
 </body>
 </html>
