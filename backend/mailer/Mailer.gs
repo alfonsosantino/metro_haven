@@ -5,6 +5,7 @@
  */
 const BRAND = { name: 'Metro Haven', green: '#06302a', gold: '#c9a675', cream: '#fbf7f2' };
 
+const OWNER_EMAIL = 'metrohavensuites@gmail.com'; // where new-request alerts go
 const SUPABASE_URL = 'https://lkuhtroarhmiitkiigqz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_IG499FzQnFcJH_KOseuBgw_tKiJ_9RW'; // public key (same one the website uses)
 
@@ -22,6 +23,7 @@ function doPost(e) {
     const b = JSON.parse(r.getContentText());
     if (b.type === 'approved') sendApproved_(b);
     else if (b.type === 'declined') sendDeclined_(b);
+    else if (b.type === 'new') sendOwnerAlert_(b);
     return out_({ ok: true });
   } catch (err) { return out_({ ok: false, error: String(err) }); }
 }
@@ -32,6 +34,8 @@ function sendApproved_(b) {
   const guests = Number(b.adults || 0) + Number(b.children || 0);
   const guestTxt = guests + ' guest' + (guests === 1 ? '' : 's') + (Number(b.infants) ? ', ' + b.infants + ' infant' + (b.infants == 1 ? '' : 's') : '');
   const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' + encodeURIComponent(b.pay_url);
+  let qrBlob = null;  // embed the QR inside the email (external images get blocked / look spammy)
+  try { qrBlob = UrlFetchApp.fetch(qr).getBlob().setName('payment-qr.png'); } catch (_) {}
   const subject = 'Your Booking Request Has Been Approved! (' + b.id + ')';
   const text = [
     'Good news! Your booking request has been approved by the host!', '',
@@ -55,11 +59,14 @@ function sendApproved_(b) {
     h_('Booking details') + '<table width="100%" cellpadding="0" cellspacing="0">' + rows + '</table>' +
     h_('Proceed to payment') +
     '<p style="margin:0 0 14px;color:#1d2b27;font-size:14.5px">Scan the QR code below to access your booking payment page. You can select your preferred payment method and review optional add-ons, including pool access and additional guest fees.</p>' +
-    '<div style="text-align:center"><img src="' + qr + '" width="200" height="200" alt="Payment page QR code" style="border:1px solid #e4d6c3;border-radius:12px"></div>' +
+    '<div style="text-align:center"><img src="' + (qrBlob ? 'cid:payqr' : qr) + '" width="200" height="200" alt="Payment page QR code" style="border:1px solid #e4d6c3;border-radius:12px"></div>' +
     '<div style="text-align:center;margin:16px 0 6px"><a href="' + esc_(b.pay_url) + '" style="display:inline-block;background:' + BRAND.green + ';color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:999px">Open payment page</a></div>' +
-    '<p style="text-align:center;font-size:12.5px;color:#5f6d68;margin:0 0 18px">On your phone? Just tap the button.</p>' +
+    '<p style="text-align:center;font-size:12.5px;color:#5f6d68;margin:0 0 6px">On your phone? Tap the button, or copy this link into your browser:</p>' +
+    '<p style="text-align:center;font-size:12px;word-break:break-all;margin:0 0 18px"><a href="' + esc_(b.pay_url) + '" style="color:#a8834f">' + esc_(b.pay_url) + '</a></p>' +
     '<p style="margin:18px 0 0;color:#1d2b27">Thank you for choosing Metro Haven! We look forward to hosting you.</p>');
-  MailApp.sendEmail({ to: b.to, subject: subject, body: text, htmlBody: html, name: BRAND.name });
+  const opts = { to: b.to, subject: subject, body: text, htmlBody: html, name: BRAND.name, replyTo: OWNER_EMAIL };
+  if (qrBlob) opts.inlineImages = { payqr: qrBlob };
+  MailApp.sendEmail(opts);
 }
 
 function sendDeclined_(b) {
@@ -79,7 +86,31 @@ function sendDeclined_(b) {
     '<p style="margin:0 0 18px;color:#1d2b27">Thank you for considering Metro Haven. Unfortunately, your requested dates are unavailable. Please return to the booking page to view available units and alternative dates.</p>' +
     '<div style="text-align:center;margin:10px 0 18px"><a href="' + esc_(link) + '" style="display:inline-block;background:' + BRAND.green + ';color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:999px">View available dates</a></div>' +
     '<p style="margin:0;color:#1d2b27">We hope to host you soon!</p>');
-  MailApp.sendEmail({ to: b.to, subject: subject, body: text, htmlBody: html, name: BRAND.name });
+  MailApp.sendEmail({ to: b.to, subject: subject, body: text, htmlBody: html, name: BRAND.name, replyTo: OWNER_EMAIL });
+}
+
+function sendOwnerAlert_(b) {
+  const guests = Number(b.adults || 0) + Number(b.children || 0);
+  const guestTxt = guests + ' guest' + (guests === 1 ? '' : 's') + (Number(b.infants) ? ', ' + b.infants + ' infant' + (b.infants == 1 ? '' : 's') : '');
+  const admin = (b.site_url || '') + 'admin/';
+  const amt = b.amount ? '₱' + Number(b.amount).toLocaleString('en-PH') : '—';
+  const subject = 'New booking request ' + b.id + ' — ' + b.suite + ', ' + nice_(b.checkin);
+  const rows = [['Reference', b.id], ['Suite', b.suite], ['Check-in', nice_(b.checkin)], ['Check-out', nice_(b.checkout)],
+                ['Nights', b.nights], ['Guests', guestTxt], ['Estimated total', amt], ['Guest name', b.name],
+                ['Mobile', b.phone || '—'], ['Email', b.to || '—']];
+  const text = ['New booking request on the website — waiting for your approval.', '']
+    .concat(rows.map(r => r[0] + ': ' + r[1]))
+    .concat(b.message ? ['', 'Message: ' + b.message] : [])
+    .concat(['', 'Accept or decline in the admin dashboard:', admin]).join('\n');
+  const html = shell_(
+    '<p style="font-size:20px;font-weight:700;color:' + BRAND.green + ';margin:0 0 6px">New booking request</p>' +
+    '<p style="margin:0 0 16px;color:#1d2b27">A guest is interested and waiting for your approval.</p>' +
+    '<table width="100%" cellpadding="0" cellspacing="0">' + rows.map(r => '<tr><td style="padding:5px 0;color:#5f6d68;font-size:14px">' + esc_(r[0]) + '</td><td style="padding:5px 0;text-align:right;font-weight:600;color:' + BRAND.green + ';font-size:14px">' + esc_(r[1]) + '</td></tr>').join('') + '</table>' +
+    (b.message ? '<p style="margin:14px 0 0;padding:10px 14px;background:' + BRAND.cream + ';border-radius:10px;font-size:14px;color:#1d2b27">“' + esc_(b.message) + '”</p>' : '') +
+    '<div style="text-align:center;margin:20px 0 4px"><a href="' + esc_(admin) + '" style="display:inline-block;background:' + BRAND.green + ';color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:999px">Open admin dashboard</a></div>');
+  const opts = { to: OWNER_EMAIL, subject: subject, body: text, htmlBody: html, name: 'Metro Haven Website' };
+  if (b.to) opts.replyTo = b.to;
+  MailApp.sendEmail(opts);
 }
 
 function shell_(inner) {
