@@ -6,11 +6,11 @@ FB = "https://www.facebook.com/profile.php?id=61566400330651"
 MSG = "https://m.me/61566400330651"
 
 SUITES = {
- "ebony": dict(
+ "ebony": dict(incl=2, max=4,
    name="Ebony Suite", type="Open-concept 1BR", vibe="Modern city hideaway",
    where="Tower 3 · 19th Floor", price="1,999", rating=None,
    lead="A modern city hideaway with rich dark-oak accents, gray tones, and a bright, hotel-inspired atmosphere. Located high above the city, Ebony Suite offers a relaxing space where you can enjoy the skyline while making the most of your stay.",
-   stats=[("pin","19th floor · city view"),("sofa","Open-concept layout"),("bath","1 bathroom"),("users","Good for 2 · max 4")],
+   stats=[("pin","19th floor · city view"),("sofa","Open-concept layout"),("bath","1 bathroom"),("users","Rate for 2 · max 4")],
    photos=["ebony_11","ebony_02","ebony_01","ebony_00","ebony_12","ebony_10"],
    groups=[
      ("Open-concept living space","sofa",["Open-layout unit with no separate room divider or bedroom door","Comfortable sofa bed","Dining area for 2 guests"]),
@@ -21,11 +21,11 @@ SUITES = {
    ],
    closing=("Your city staycation","Enjoy movie nights, sing your favorite songs, play games, or simply take in the city view. Ebony Suite brings together the convenience of a modern space and the experience of a hotel-inspired getaway."),
    airbnb=None),
- "cedar": dict(
+ "cedar": dict(incl=3, max=6,
    name="Cedar Suite", type="1 Bedroom", vibe="Rustic industrial charm",
    where="Tower 1 · 2nd Floor", price="2,199", rating=("4.71","91","https://www.airbnb.com/rooms/1250604774381847146"),
    lead="Warm textures, rustic details, and an industrial-inspired interior come together in this cozy hideaway — made for laid-back stays, good company, and a little fun along the way.",
-   stats=[("bed","1 bedroom"),("sofa","Bunk + pull-out beds"),("bath","1 bathroom"),("users","Good for 2 · max 4")],
+   stats=[("bed","1 bedroom"),("sofa","Bunk + pull-out beds"),("bath","1 bathroom"),("users","Rate for 3 · max 6")],
    photos=["cedar_02","cedar_10","cedar_11","cedar_00"],
    groups=[
      ("Sleep & relax","bed",["Bunk bed with additional pull-out bed","Sofa with pull-out bed","Comfortable living space","Balcony"]),
@@ -35,11 +35,11 @@ SUITES = {
    ],
    closing=("Plenty of ways to enjoy your stay","Whether you're spending the day playing board games, singing your favorite songs, cooking together, or simply enjoying the balcony, Cedar Suite gives you plenty of ways to enjoy your stay."),
    airbnb="https://www.airbnb.com/rooms/1250604774381847146"),
- "willow": dict(
+ "willow": dict(incl=5, max=8,
    name="Willow Suite", type="2 Bedrooms", vibe="Perfect for groups & families",
    where="Tower 1 · 5th Floor", price="4,599", rating=("4.88","52","https://www.airbnb.com/rooms/1344877140733324297"),
    lead="A spacious staycation made for bigger groups, longer conversations, and shared moments.",
-   stats=[("bed","2 bedrooms"),("bath","2 bathrooms"),("sofa","Sofa pull-out bed"),("users","Up to 8 guests")],
+   stats=[("bed","2 bedrooms"),("bath","2 bathrooms"),("sofa","Sofa pull-out bed"),("users","Rate for 5 · max 8")],
    photos=["willow_01","willow_02","willow_11","willow_10","willow_12","willow_00"],
    groups=[
      ("Bedroom 1","bed",["1 bed","Own bathroom"]),
@@ -175,7 +175,7 @@ def page(key):
     <aside class="book">
       <div class="bcard">
         <div class="price"><small>Starts at</small><b>₱{s["price"]}</b><span>/ night</span></div>
-        <p class="pnote">Starting rate — final price depends on dates and number of guests.</p>
+        <p class="pnote">Per night for up to {s["incl"]} guests · ₱250 per extra guest per night (max {s["max"]}). Infants free.</p>
         <a class="btn btn-dark" href="calendar.html?suite={key}">{ic("cal")}Check available dates</a>
         <a class="btn btn-ghost" href="{msg}" target="_blank" rel="noopener">{ic("chat")}Message us</a>
         <ul class="perks"><li>{ic("check")}No platform service fees</li><li>{ic("check")}Owner-confirmed payments</li><li>{ic("check")}Replies within an hour</li></ul>

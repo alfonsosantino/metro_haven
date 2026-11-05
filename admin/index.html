@@ -275,10 +275,10 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="../js/config.js?v=4"></script>
+<script src="../js/config.js?v=5"></script>
 <script>
 const SUITES = { ebony:"Ebony Suite", cedar:"Cedar Suite", willow:"Willow Suite" };
-const MAX = { ebony:4, cedar:4, willow:8 };
+const MAX = { ebony:4, cedar:6, willow:8 };
 const BLOCKING = ["confirmed","blocked"];
 const store = { get(k){ try{ return sessionStorage.getItem(k) || localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v,persist){ try{ (persist?localStorage:sessionStorage).setItem(k,v); }catch(e){} },

@@ -160,6 +160,11 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
 #bmDone{text-align:center}
 .okic{width:56px;height:56px;border-radius:50%;background:var(--green);color:var(--gold);display:grid;place-items:center;font-size:28px;margin:6px auto 8px}
 .ref{font-family:'Lilita One';font-size:34px;color:var(--green);letter-spacing:2px;margin:4px 0 10px}
+
+.quote{background:var(--cream);border:1px solid var(--sand);border-radius:14px;padding:12px 16px;margin:-4px 0 14px;font-size:14.5px}
+.quote div{display:flex;justify-content:space-between;gap:10px;padding:3px 0;color:var(--ink)}
+.quote .qt{border-top:1px dashed var(--sand);margin-top:6px;padding-top:8px;font-weight:700;color:var(--green);font-size:16px}
+.quote small{display:block;color:var(--muted);font-size:12.5px;margin-top:6px}
 </style>
 </head>
 <body>
@@ -219,6 +224,7 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
           </div>
         </div>
         <div class="nights" id="nights"></div>
+        <div class="quote" id="quote" hidden></div>
         <button class="btn btn-gold" id="booknow" type="button" disabled>Book Now →</button>
         <a class="btn btn-dark" id="request" aria-disabled="true" target="_blank" rel="noopener" href="#">Request on Messenger →</a>
         <button class="btn btn-ghost" id="clear" type="button">Clear dates</button>
@@ -273,16 +279,34 @@ footer{background:var(--green);color:#b9c8c1;text-align:center;padding:26px;font
 <footer>© 2026 Metro Haven · The Grass Residences, Quezon City</footer>
 
 <script src="bookings.js"></script>
-<script src="js/config.js?v=4"></script>
+<script src="js/config.js?v=5"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const SUITES = {
-  ebony:  { name: "Ebony Suite",  where: "Tower 3 19th Flr", type: "1BR", max: 4 },
-  cedar:  { name: "Cedar Suite",  where: "Tower 1 2nd Flr",  type: "1BR", max: 4 },
-  willow: { name: "Willow Suite", where: "Tower 1 5th Flr",  type: "2BR", max: 8 }
+  ebony:  { name: "Ebony Suite",  where: "Tower 3 19th Flr", type: "1BR", max: 4, incl: 2, base: 1999 },
+  cedar:  { name: "Cedar Suite",  where: "Tower 1 2nd Flr",  type: "1BR", max: 6, incl: 3, base: 2199 },
+  willow: { name: "Willow Suite", where: "Tower 1 5th Flr",  type: "2BR", max: 8, incl: 5, base: 4599 }
 };
 const MAX_INFANTS = 2;
 const guests = { adults: 1, children: 0, infants: 0 };
+const EXTRA_FEE = 250;
+const peso = n => "₱" + Number(n).toLocaleString("en-PH");
+function quote(){
+  if(!checkIn || !checkOut) return null;
+  const s = SUITES[suite], nights = Math.round((checkOut - checkIn)/864e5);
+  const extra = Math.max(0, guests.adults + guests.children - s.incl);
+  return { nights, base: s.base, extra, extraFee: extra * EXTRA_FEE, perNight: s.base + extra * EXTRA_FEE, total: nights * (s.base + extra * EXTRA_FEE) };
+}
+function renderQuote(){
+  const q = quote(), el = document.getElementById("quote");
+  if(!q){ el.hidden = true; return; }
+  const s = SUITES[suite];
+  el.innerHTML = `<div><span>${peso(q.base)} × ${q.nights} night${q.nights>1?"s":""}</span><span>${peso(q.base*q.nights)}</span></div>` +
+    (q.extra ? `<div><span>Extra guest${q.extra>1?"s":""} (${q.extra} × ${peso(EXTRA_FEE)} × ${q.nights})</span><span>${peso(q.extraFee*q.nights)}</span></div>` : "") +
+    `<div class="qt"><span>Estimated total</span><span>${peso(q.total)}</span></div>` +
+    `<small>Rate includes ${s.incl} guests · ${peso(EXTRA_FEE)}/night per extra guest · infants free</small>`;
+  el.hidden = false;
+}
 const MESSENGER = "https://m.me/61566400330651";
 const MONTHS = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
 let BOOKINGS = window.METRO_HAVEN_BOOKINGS || {};
@@ -372,14 +396,15 @@ function updatePanel(){
   if(checkIn && checkOut){
     const nights = Math.round((checkOut - checkIn)/864e5);
     n.textContent = `${nights} night${nights>1?"s":""} · ${SUITES[suite].name}`;
+    renderQuote();
     hint.textContent = "Looks good! Send us a request and we'll confirm.";
-    const text = `Hi Metro Haven! I'd like to book the ${SUITES[suite].name} — check-in ${nice(checkIn)}, check-out ${nice(checkOut)} (${nights} night${nights>1?"s":""}), for ${guestText(true)}. Is it available?`;
+    const text = `Hi Metro Haven! I'd like to book the ${SUITES[suite].name} — check-in ${nice(checkIn)}, check-out ${nice(checkOut)} (${nights} night${nights>1?"s":""}), for ${guestText(true)} — estimated ${peso(quote().total)}. Is it available?`;
     req.href = `${MESSENGER}?text=${encodeURIComponent(text)}`;
     req.setAttribute("aria-disabled","false");
     document.getElementById("booknow").disabled = false;
   } else {
     document.getElementById("booknow").disabled = true;
-    n.textContent = "";
+    n.textContent = ""; renderQuote();
     hint.textContent = checkIn ? "Now tap your check-out date." : "Tap a date on the calendar to set your check-in.";
     req.href = "#"; req.setAttribute("aria-disabled","true");
   }
@@ -453,7 +478,7 @@ function openBook(){
   if(!checkIn || !checkOut) return;
   if(!API_ON){ window.open(document.getElementById("request").href, "_blank", "noopener"); return; }
   const nights = Math.round((checkOut - checkIn)/864e5);
-  document.getElementById("bmSum").innerHTML = `<b>${SUITES[suite].name}</b> · ${SUITES[suite].where}<br>${nice(checkIn)} → ${nice(checkOut)} · ${nights} night${nights>1?"s":""}<br>${guestText(true)}`;
+  document.getElementById("bmSum").innerHTML = `<b>${SUITES[suite].name}</b> · ${SUITES[suite].where}<br>${nice(checkIn)} → ${nice(checkOut)} · ${nights} night${nights>1?"s":""}<br>${guestText(true)}<br><b>Estimated total: ${peso(quote().total)}</b>`;
   document.getElementById("bmErr").textContent = "";
   document.getElementById("bmForm").hidden = false; document.getElementById("bmDone").hidden = true;
   bm.hidden = false; document.body.style.overflow = "hidden";
