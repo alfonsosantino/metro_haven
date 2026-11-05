@@ -88,6 +88,10 @@ window.METRO_HAVEN_CONFIG = {
       });
     },
     async status(id, contact) { return rpc("booking_status", { p_id: id, p_contact: contact }); },
+    async payment(id, token) { return rpc("get_payment", { p_id: id, p_token: token }); },
+    async submitPayment(id, token, method, ref, poolGuests, poolDays) {
+      return rpc("submit_payment", { p_id: id, p_token: token, p_method: method, p_ref: ref, p_pool_guests: poolGuests, p_pool_days: poolDays });
+    },
 
     /* admin */
     async signIn(email, password, persist) {

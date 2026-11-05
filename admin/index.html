@@ -275,7 +275,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="../js/config.js?v=5"></script>
+<script src="../js/config.js?v=6"></script>
 <script>
 const SUITES = { ebony:"Ebony Suite", cedar:"Cedar Suite", willow:"Willow Suite" };
 const MAX = { ebony:4, cedar:6, willow:8 };
@@ -343,6 +343,8 @@ function card(r, actions){
     <div class="acts">${actions}</div>
     ${r.message ? `<div class="msgq">“${esc(r.message)}”</div>` : ""}
     ${r.notes ? `<div class="msgq" style="background:var(--beige)"><b>Note:</b> ${esc(r.notes)}</div>` : ""}
+    ${r.payment_submitted_at ? `<div class="msgq" style="background:var(--okbg)"><b>Payment submitted:</b> ${esc(({gcash:"GCash",bpi:"BPI",maribank:"MariBank"})[r.payment_method]||r.payment_method)} · ref ${esc(r.payment_ref)}${+r.pool_guests?` · pool ${r.pool_guests} guest${r.pool_guests==1?"":"s"} × ${r.pool_days} day${r.pool_days==1?"":"s"} (${peso(r.pool_guests*r.pool_days*150)})`:""} — verify, then “Mark paid”.</div>` : ""}
+    ${r.status==="confirmed" && r.email && r.source==="website" ? `<div class="sub" style="grid-column:1/-1">${r.approval_email_sent_at?"✉ Approval email sent":"✉ Approval email not sent"}</div>` : ""}
     ${conflict ? `<div class="warnline">These dates overlap a confirmed booking or block — accepting is not possible unless you change the dates.</div>` : ""}
   </div>`;
 }
