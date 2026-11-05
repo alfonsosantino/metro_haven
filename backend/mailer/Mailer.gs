@@ -32,7 +32,7 @@ function sendApproved_(b) {
   const guests = Number(b.adults || 0) + Number(b.children || 0);
   const guestTxt = guests + ' guest' + (guests === 1 ? '' : 's') + (Number(b.infants) ? ', ' + b.infants + ' infant' + (b.infants == 1 ? '' : 's') : '');
   const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' + encodeURIComponent(b.pay_url);
-  const subject = 'Your Booking Request Has Been Approved!';
+  const subject = 'Your Booking Request Has Been Approved! (' + b.id + ')';
   const text = [
     'Good news! Your booking request has been approved by the host!', '',
     'BOOKING DETAILS',
@@ -65,15 +65,17 @@ function sendApproved_(b) {
 function sendDeclined_(b) {
   const site = b.site_url || '';
   const link = site + 'calendar.html';
-  const subject = 'Update on Your Booking Request';
+  const subject = 'Update on Your Booking Request (' + b.id + ')';
   const text = [
     'Hello!', '',
+    'Booking Reference: ' + b.id, '',
     'Thank you for considering Metro Haven. Unfortunately, your requested dates are unavailable. Please return to the booking page to view available units and alternative dates.',
     link, '',
     'We hope to host you soon!'
   ].join('\n');
   const html = shell_(
     '<p style="font-size:20px;font-weight:700;color:' + BRAND.green + ';margin:0 0 12px">Hello!</p>' +
+    '<p style="margin:0 0 14px;font-size:14px;color:#5f6d68">Booking Reference: <b style="color:' + BRAND.green + '">' + esc_(b.id) + '</b></p>' +
     '<p style="margin:0 0 18px;color:#1d2b27">Thank you for considering Metro Haven. Unfortunately, your requested dates are unavailable. Please return to the booking page to view available units and alternative dates.</p>' +
     '<div style="text-align:center;margin:10px 0 18px"><a href="' + esc_(link) + '" style="display:inline-block;background:' + BRAND.green + ';color:#fff;text-decoration:none;font-weight:700;padding:12px 26px;border-radius:999px">View available dates</a></div>' +
     '<p style="margin:0;color:#1d2b27">We hope to host you soon!</p>');
@@ -97,5 +99,5 @@ function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 function testSend() {
   const me = Session.getActiveUser().getEmail();
   sendApproved_({ to: me, id: 'MH-000000', name: 'Sample Guest', checkin: '2026-12-24', checkout: '2026-12-26', adults: 2, children: 0, infants: 0, pay_url: 'https://alfonsosantino.github.io/metro_haven/pay.html?ref=MH-000000&t=sample' });
-  sendDeclined_({ to: me, site_url: 'https://alfonsosantino.github.io/metro_haven/' });
+  sendDeclined_({ to: me, id: 'MH-000000', site_url: 'https://alfonsosantino.github.io/metro_haven/' });
 }
