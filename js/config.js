@@ -119,6 +119,19 @@ window.METRO_HAVEN_CONFIG = {
       if (!rows || !rows.length) throw new Error("Booking not found or not allowed.");
       return toRow(rows[0]);
     },
+    async admins() {
+      const t = await token(); if (!t) throw new Error("Please sign in again.");
+      return req("/rest/v1/admins?select=user_id,email,added_at&order=added_at", { headers: headers(t) });
+    },
+    async adminAction(body) {
+      const t = await token(); if (!t) throw new Error("Please sign in again.");
+      return req("/functions/v1/admin-users", { method: "POST", headers: headers(t), body: JSON.stringify(body) });
+    },
+    async changePassword(pw) {
+      const t = await token(); if (!t) throw new Error("Please sign in again.");
+      return req("/auth/v1/user", { method: "PUT", headers: headers(t), body: JSON.stringify({ password: pw }) });
+    },
+    me() { const s = store.get(); return s && s.email; },
     async create(fields) {
       const t = await token(); if (!t) throw new Error("Please sign in again.");
       const rows = await req("/rest/v1/bookings", { method: "POST", headers: headers(t, { Prefer: "return=representation" }), body: JSON.stringify(toDb(fields)) });

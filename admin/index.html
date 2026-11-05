@@ -146,6 +146,12 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
   .grid2{grid-template-columns:1fr}
   .brand img{height:36px}.brand b{font-size:17px}
 }
+.teamgrid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px;align-items:start}
+.tcard{background:#fff;border:1px solid var(--sand);border-radius:18px;padding:22px}
+.tcard h3{font-family:'Lilita One';font-weight:400;color:var(--green);font-size:22px}
+.alist{margin-top:12px;display:grid;gap:8px}
+.arow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--beige);border-radius:12px}
+@media (max-width:860px){.teamgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -201,6 +207,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
       <button class="tab" role="tab" data-t="up" aria-selected="false">Upcoming</button>
       <button class="tab" role="tab" data-t="cal" aria-selected="false">Calendar & blocking</button>
       <button class="tab" role="tab" data-t="all" aria-selected="false">All records</button>
+      <button class="tab" role="tab" data-t="team" aria-selected="false">Admins</button>
     </div>
 
     <section class="panel" id="p-inq"><div class="list" id="inqList"></div></section>
@@ -227,6 +234,35 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
       <div class="legend"><span><i style="background:var(--okbg)"></i>Confirmed</span><span><i style="background:var(--greybg)"></i>Blocked</span><span><i style="background:var(--warnbg)"></i>Pending inquiry</span><span>Click a booking to edit it.</span></div>
     </section>
 
+    <section class="panel" id="p-team" hidden>
+      <div class="teamgrid">
+        <div class="tcard">
+          <h3>Admin accounts</h3>
+          <p class="sub">Everyone here can sign in to this dashboard.</p>
+          <div id="adminList" class="alist"></div>
+        </div>
+        <div class="tcard">
+          <h3>Add an admin</h3>
+          <form id="addAdmin" autocomplete="off">
+            <label class="fl">Email<input type="email" name="email" required autocomplete="off"></label>
+            <label class="fl">Password<input type="password" name="pw" required minlength="10" autocomplete="new-password" placeholder="At least 10 characters"></label>
+            <label class="fl">Confirm password<input type="password" name="pw2" required autocomplete="new-password"></label>
+            <p class="err" id="addErr"></p>
+            <button class="btn btn-dark" type="submit" style="width:100%">Create admin account</button>
+            <p class="sub" style="margin-top:8px">Share the password with them privately. They can change it after signing in.</p>
+          </form>
+        </div>
+        <div class="tcard">
+          <h3>Change my password</h3>
+          <form id="myPw" autocomplete="off">
+            <label class="fl">New password<input type="password" name="pw" required minlength="10" autocomplete="new-password"></label>
+            <label class="fl">Confirm new password<input type="password" name="pw2" required autocomplete="new-password"></label>
+            <p class="err" id="pwErr"></p>
+            <button class="btn btn-dark" type="submit" style="width:100%">Update password</button>
+          </form>
+        </div>
+      </div>
+    </section>
     <section class="panel" id="p-all" hidden>
       <div class="toolbar">
         <input type="search" id="q" placeholder="Search name, phone, reference…">
@@ -275,7 +311,7 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="../js/config.js?v=6"></script>
+<script src="../js/config.js?v=7"></script>
 <script>
 const SUITES = { ebony:"Ebony Suite", cedar:"Cedar Suite", willow:"Willow Suite" };
 const MAX = { ebony:4, cedar:6, willow:8 };
@@ -500,6 +536,40 @@ ef.onsubmit = async e => {
   }catch(ex){ $("#eErr").textContent = ex.message; }
   finally{ $("#eSave").disabled = false; }
 };
+
+/* ---------- admins (team) ---------- */
+async function loadAdmins(){
+  try{
+    const list = await mhApi.admins(), me = (mhApi.me()||"").toLowerCase();
+    $("#adminList").innerHTML = list.map(x => `<div class="arow"><div><b>${esc(x.email||"—")}</b>${(x.email||"").toLowerCase()===me?' <span class="pill p-confirmed">you</span>':''}<div class="sub">Added ${new Date(x.added_at).toLocaleDateString()}</div></div>${(x.email||"").toLowerCase()===me?'':`<button class="btn btn-bad btn-sm" data-rm="${esc(x.user_id)}" data-em="${esc(x.email)}">Remove</button>`}</div>`).join("");
+  }catch(ex){ $("#adminList").textContent = ex.message; }
+}
+$("#adminList").onclick = async e => {
+  const b = e.target.closest("[data-rm]"); if(!b) return;
+  if(!confirm(`Remove ${b.dataset.em}? They will no longer be able to sign in.`)) return;
+  b.disabled = true;
+  try{ await mhApi.adminAction({ action:"remove", user_id:b.dataset.rm }); toast("Admin removed"); loadAdmins(); }
+  catch(ex){ toast(ex.message, true); b.disabled = false; }
+};
+$("#addAdmin").onsubmit = async e => {
+  e.preventDefault(); const f = e.target; $("#addErr").textContent = "";
+  if(f.pw.value.length < 10){ $("#addErr").textContent = "Password must be at least 10 characters."; return; }
+  if(f.pw.value !== f.pw2.value){ $("#addErr").textContent = "Passwords don't match."; return; }
+  const btn = f.querySelector("button"); btn.disabled = true;
+  try{ await mhApi.adminAction({ action:"create", email:f.email.value.trim(), password:f.pw.value }); toast("Admin account created"); f.reset(); loadAdmins(); }
+  catch(ex){ $("#addErr").textContent = ex.message; }
+  finally{ btn.disabled = false; }
+};
+$("#myPw").onsubmit = async e => {
+  e.preventDefault(); const f = e.target; $("#pwErr").textContent = "";
+  if(f.pw.value.length < 10){ $("#pwErr").textContent = "Password must be at least 10 characters."; return; }
+  if(f.pw.value !== f.pw2.value){ $("#pwErr").textContent = "Passwords don't match."; return; }
+  const btn = f.querySelector("button"); btn.disabled = true;
+  try{ await mhApi.changePassword(f.pw.value); toast("Password updated"); f.reset(); }
+  catch(ex){ $("#pwErr").textContent = ex.message; }
+  finally{ btn.disabled = false; }
+};
+document.querySelector('.tab[data-t="team"]').addEventListener("click", loadAdmins);
 
 /* CSV */
 $("#csvBtn").onclick = () => {
