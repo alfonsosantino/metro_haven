@@ -544,7 +544,7 @@ document.querySelectorAll('.suite').forEach(c => {
 (function(){
   const f = document.getElementById("statusForm"); if(!f) return;
   const msg = document.getElementById("sfMsg"), btn = document.getElementById("sfBtn");
-  const LABEL = { pending:"Pending — we're reviewing your request", confirmed:"Confirmed", declined:"Declined", cancelled:"Cancelled" };
+  const LABEL = { pending:"Pending — we're reviewing your request", confirmed:"Approved — please complete payment", declined:"Declined", cancelled:"Cancelled" };
   const fmt = d => new Date(d + "T00:00:00").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric"});
   f.onsubmit = async e => {
     e.preventDefault(); msg.style.display = "block"; msg.className = "form-msg";
@@ -555,6 +555,10 @@ document.querySelectorAll('.suite').forEach(c => {
     try{
       const b = await mhApi.status(id, contact);
       msg.innerHTML = `<b>${b.id}</b> · ${b.suite}<br>${fmt(b.checkin)} → ${fmt(b.checkout)} (${b.nights} night${b.nights>1?"s":""})<br>Status: <b class="st-${b.status}">${LABEL[b.status] || b.status}</b>`;
+      if(b.pay_path && !b.paid){ msg.innerHTML += b.payment_submitted
+        ? `<br><span>Payment submitted — we'll verify it shortly.</span>`
+        : `<br><a class="btn btn-dark" style="margin-top:10px;width:100%;justify-content:center" href="${b.pay_path}">Proceed to payment →</a>`; }
+      if(b.paid) msg.innerHTML += `<br><span>Payment received — see you soon!</span>`;
     }catch(ex){ msg.textContent = ex.message; msg.className = "form-msg err"; }
     finally{ btn.disabled = false; }
   };
