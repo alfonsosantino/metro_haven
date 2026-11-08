@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /pay
+
+Sitemap: https://metrohavensuites.site/sitemap.xml

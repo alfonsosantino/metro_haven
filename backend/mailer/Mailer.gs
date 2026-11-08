@@ -129,6 +129,6 @@ function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).set
 /** Run once from the editor to grant Gmail permission and send yourself a sample. */
 function testSend() {
   const me = Session.getActiveUser().getEmail();
-  sendApproved_({ to: me, id: 'MH-000000', name: 'Sample Guest', checkin: '2026-12-24', checkout: '2026-12-26', adults: 2, children: 0, infants: 0, pay_url: 'https://alfonsosantino.github.io/metro_haven/pay.html?ref=MH-000000&t=sample' });
-  sendDeclined_({ to: me, id: 'MH-000000', site_url: 'https://alfonsosantino.github.io/metro_haven/' });
+  sendApproved_({ to: me, id: 'MH-000000', name: 'Sample Guest', checkin: '2026-12-24', checkout: '2026-12-26', adults: 2, children: 0, infants: 0, pay_url: 'https://metrohavensuites.site/pay?ref=MH-000000&t=sample' });
+  sendDeclined_({ to: me, id: 'MH-000000', site_url: 'https://metrohavensuites.site/' });
 }

@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
 <title>Admin — Metro Haven</title>
 <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32.png">
 <link rel="icon" type="image/png" sizes="48x48" href="../img/favicon-48.png">
@@ -156,6 +155,8 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
 .arow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--beige);border-radius:12px}
 @media (max-width:860px){.teamgrid{grid-template-columns:1fr}}
 </style>
+<meta name="robots" content="noindex, nofollow">
+<script>(function(){var p=location.pathname,n=p.replace(/\/index\.html$/,"/").replace(/\.html$/,"");if(n!==p)history.replaceState(null,"",n+location.search+location.hash)})();</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -188,10 +189,10 @@ tbody tr{cursor:pointer}tbody tr:hover{background:var(--cream)}
 <div id="appView" hidden>
   <header>
     <div class="wrap">
-      <a class="brand" href="../index.html" target="_blank"><img src="../img/logo_light.png" alt=""><b>METRO HAVEN</b><span>ADMIN</span></a>
+      <a class="brand" href="/" target="_blank"><img src="../img/logo_light.png" alt="Metro Haven logo"><b>METRO HAVEN</b><span>ADMIN</span></a>
       <div class="hact">
         <button class="btn btn-sm" id="refreshBtn"><svg class="i"><use href="#i-refresh"/></svg><span class="hide-m">Refresh</span></button>
-        <a class="btn btn-sm hide-m" href="../calendar.html" target="_blank">View calendar</a>
+        <a class="btn btn-sm hide-m" href="/calendar" target="_blank">View calendar</a>
         <button class="btn btn-sm" id="logoutBtn">Sign out</button>
       </div>
     </div>
