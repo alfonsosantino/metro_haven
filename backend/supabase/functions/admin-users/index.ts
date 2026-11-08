@@ -40,10 +40,12 @@ Deno.serve(async (req) => {
     const { data: created, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
     if (created?.user) userId = created.user.id;
     else if (error && /already/i.test(error.message)) {
-      // Existing login (e.g. made earlier in Supabase) — just grant admin access, don't touch the password.
+      // Existing login (e.g. made earlier in Supabase) — grant admin access and set the password entered here.
       const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
       userId = list?.users.find((u) => (u.email || "").toLowerCase() === email)?.id || null;
       if (!userId) return json({ error: "That email already has an account but couldn't be found." }, 400);
+      const { error: upErr } = await admin.auth.admin.updateUserById(userId, { password, email_confirm: true });
+      if (upErr) return json({ error: upErr.message }, 400);
     } else return json({ error: error?.message || "Could not create the account." }, 400);
 
     const { error: insErr } = await admin.from("admins").upsert({ user_id: userId, email }, { onConflict: "user_id" });
